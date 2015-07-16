@@ -1,2 +1,3 @@
-# laravel-shopping-cart
-Laravel Shopping Cart Module
+# Laravel Shopping Cart Module [![Build Status](https://travis-ci.org/php-soft/laravel-shopping-cart.svg)](https://travis-ci.org/php-soft/laravel-shopping-cart)
+
+Developing...

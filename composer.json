@@ -25,6 +25,9 @@
         "phpspec/phpspec": "~2.1"
     },
     "autoload": {
+        "classmap": [
+            "src/Illuminate/ShoppingCart/database"
+        ],
         "psr-4": {
             "PhpSoft\\Illuminate\\ShoppingCart\\": "src/Illuminate/ShoppingCart"
         }

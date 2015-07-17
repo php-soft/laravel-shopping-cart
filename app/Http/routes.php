@@ -16,3 +16,5 @@ Route::get('/', function () {
 });
 
 Route::resource('users', 'UserController');
+
+Route::resource('products', '\\PhpSoft\\Illuminate\\ShoppingCart\\Controllers\\ProductController');

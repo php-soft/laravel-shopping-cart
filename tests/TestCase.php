@@ -22,4 +22,16 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
 
         return $app;
     }
+
+    public function setUp()
+    {
+        parent::setUp();
+        Artisan::call('migrate', [ '--path' => '/src/Illuminate/ShoppingCart/database/migrations' ]);
+    }
+
+    public function tearDown()
+    {
+        Artisan::call('migrate:reset');
+        parent::tearDown();
+    }
 }

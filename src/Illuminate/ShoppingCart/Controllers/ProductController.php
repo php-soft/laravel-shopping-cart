@@ -20,6 +20,10 @@ class ProductController extends Controller
      *
      * @return Response
      */
+    public function index()
+    {
+        //
+    }
 
     /**
      * Create product action

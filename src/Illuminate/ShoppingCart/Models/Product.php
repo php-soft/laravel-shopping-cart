@@ -4,6 +4,9 @@ namespace PhpSoft\Illuminate\ShoppingCart\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Webpatser\Uuid\Uuid;
+use Illuminate\Support\Str;
+
 class Product extends Model
 {
     /**
@@ -14,6 +17,13 @@ class Product extends Model
     protected $table = 'shop_products';
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [ 'title', 'alias', 'image', 'description', 'price', 'galeries'];
+
+    /**
      * Create Product
      * 
      * @param  array  $attributes        Attributes
@@ -21,6 +31,11 @@ class Product extends Model
      */
     public static function create(array $attributes = [])
     {
-        return parent::create($attributes);
+        if (empty($attributes['alias'])) {
+            $attributes['alias'] = Str::slug($attributes['title'])
+                .'-'.Uuid::generate(4);
+        }
+
+        return parent::create($attributes)->fresh();
     }
 }

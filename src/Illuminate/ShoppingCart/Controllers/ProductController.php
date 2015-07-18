@@ -35,7 +35,7 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required',
-            'price' => 'required',
+            'alias' => 'regex:/^[a-z0-9\-]+/|unique:shop_products',
         ]);
 
         if ($validator->fails()) {
@@ -44,7 +44,11 @@ class ProductController extends Controller
             ]), 400);
         }
 
-        return response()->json([], 200);
+        $product = Product::create($request->all());
+
+        return response()->json(arrayView('product/read', [
+            'product' => $product
+        ]), 200);
     }
 
     /**

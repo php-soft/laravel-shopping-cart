@@ -15,11 +15,11 @@ class CreateShopProductTable extends Migration
         Schema::create('shop_products', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
-            $table->string('alias');
-            $table->string('image');
-            $table->text('description');
-            $table->float('price');
-            $table->json('galeries');
+            $table->string('alias')->nullable();
+            $table->string('image')->nullable();
+            $table->text('description')->nullable();
+            $table->float('price')->default(0);
+            $table->json('galeries')->nullable()->default(json_encode([]));
             $table->timestamps();
         });
     }

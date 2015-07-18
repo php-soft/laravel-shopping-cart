@@ -5,10 +5,10 @@ namespace PhpSoft\Illuminate\ShoppingCart\Controllers;
 use Validator;
 use Illuminate\Http\Request;
 
-use PhpSoft\Illuminate\ShoppingCart\Models\Product;
-
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
+
+use PhpSoft\Illuminate\ShoppingCart\Models\Product;
+use PhpSoft\Illuminate\ShoppingCart\Controllers\Controller;
 
 /**
  * Product REST
@@ -29,9 +29,6 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $app = app();
-        $app['view']->addLocation(__DIR__.'/../resources/views');
-
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'price' => 'required',

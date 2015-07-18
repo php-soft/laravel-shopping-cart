@@ -36,6 +36,10 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'alias' => 'regex:/^[a-z0-9\-]+/|unique:shop_products',
+            'image' => 'string',
+            'description' => 'string',
+            'price' => 'numeric',
+            'galleries' => 'array',
         ]);
 
         if ($validator->fails()) {

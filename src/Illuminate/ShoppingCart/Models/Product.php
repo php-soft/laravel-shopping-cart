@@ -21,7 +21,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $fillable = [ 'title', 'alias', 'image', 'description', 'price', 'galeries'];
+    protected $fillable = [ 'title', 'alias', 'image', 'description', 'price', 'galleries'];
 
     /**
      * Create Product
@@ -34,6 +34,10 @@ class Product extends Model
         if (empty($attributes['alias'])) {
             $attributes['alias'] = Str::slug($attributes['title'])
                 .'-'.Uuid::generate(4);
+        }
+
+        if (!empty($attributes['galleries'])) {
+            $attributes['galleries'] = json_encode($attributes['galleries']);
         }
 
         return parent::create($attributes)->fresh();

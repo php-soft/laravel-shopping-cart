@@ -19,7 +19,7 @@ class CreateShopProductTable extends Migration
             $table->string('image')->nullable();
             $table->text('description')->nullable();
             $table->float('price')->default(0);
-            $table->json('galeries')->nullable()->default(json_encode([]));
+            $table->json('galleries')->nullable()->default(json_encode([]));
             $table->timestamps();
         });
     }

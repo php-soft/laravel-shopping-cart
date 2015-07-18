@@ -5,7 +5,7 @@ $this->set('alias', $product->alias);
 $this->set('image', $product->image);
 $this->set('description', $product->description);
 $this->set('price', $product->price);
-$this->set('galeries', $this->each((array)json_decode($product->galeries, true), function ($section, $item) {
+$this->set('galleries', $this->each(json_decode($product->galleries), function ($section, $item) {
 
     $section->set($item);
 }));

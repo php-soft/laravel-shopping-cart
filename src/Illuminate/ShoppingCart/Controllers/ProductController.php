@@ -63,7 +63,15 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        $product = Product::find($id);
+
+        if (empty($product)) {
+            return response()->json(null, 404);
+        }
+
+        return response()->json(arrayView('product/read', [
+            'product' => $product
+        ]), 200);
     }
 
     /**

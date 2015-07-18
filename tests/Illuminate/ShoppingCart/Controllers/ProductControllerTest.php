@@ -117,4 +117,31 @@ class ProductControllerTest extends TestCase
         $this->assertEquals($galleries[1], $results->entities[0]->galleries[1]);
         $this->assertEquals($galleries[2], $results->entities[0]->galleries[2]);
     }
+
+    public function testReadNotFound()
+    {
+        $res = $this->call('GET', '/products/0');
+
+        $this->assertEquals(404, $res->getStatusCode());
+    }
+
+    public function testReadFound()
+    {
+        $product = Product::create([
+            'title' => 'Product Example',
+        ])->fresh();
+
+        $res = $this->call('GET', '/products/' . $product->id);
+
+        $this->assertEquals(200, $res->getStatusCode());
+
+        $results = json_decode($res->getContent());
+        $this->assertObjectHasAttribute('entities', $results);
+        $this->assertInternalType('array', $results->entities);
+        $this->assertEquals('Product Example', $results->entities[0]->title);
+        $this->assertNotNull($results->entities[0]->alias);
+        $this->assertEquals(null, $results->entities[0]->description);
+        $this->assertEquals(null, $results->entities[0]->image);
+        $this->assertEquals([], $results->entities[0]->galleries);
+    }
 }

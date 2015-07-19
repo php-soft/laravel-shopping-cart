@@ -2,7 +2,6 @@
 
 namespace PhpSoft\Illuminate\ShoppingCart\Controllers;
 
-use Auth;
 use Validator;
 use Illuminate\Http\Request;
 
@@ -34,6 +33,16 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        // check authenticate
+        if (!$this->checkAuth()) {
+            return response()->json(null, 401);
+        }
+
+        // check permission
+        if (!$this->checkPermission('create-product')) {
+            return response()->json(null, 403);
+        }
+
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'alias' => 'regex:/^[a-z0-9\-]+/|unique:shop_products',
@@ -85,7 +94,7 @@ class ProductController extends Controller
     public function update($id, Request $request)
     {
         // check authenticate
-        if (empty(Auth::user())) {
+        if (!$this->checkAuth()) {
             return response()->json(null, 401);
         }
 
@@ -97,7 +106,7 @@ class ProductController extends Controller
         }
 
         // check permission
-        if (!(Auth::user()->hasRole('admin') || Auth::user()->can('edit-product'))) {
+        if (!$this->checkPermission('edit-product')) {
             return response()->json(null, 403);
         }
 

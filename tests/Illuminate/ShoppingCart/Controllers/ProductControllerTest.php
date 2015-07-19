@@ -8,26 +8,27 @@ class ProductControllerTest extends TestCase
 {
     use WithoutMiddleware;
 
-    public function testCreateValidateTitle()
+    public function testCreateNotAuthAndPermission()
     {
         $res = $this->call('POST', '/products');
+        $this->assertEquals(401, $res->getStatusCode());
 
-        $this->assertEquals(400, $res->getStatusCode());
+        $user = factory(App\User::class)->make();
+        Auth::login($user);
 
-        $results = json_decode($res->getContent());
-        $this->assertEquals('error', $results->status);
-        $this->assertEquals('validation', $results->type);
-        $this->assertEquals('The title field is required.', $results->first_message);
-        $this->assertObjectHasAttribute('title', $results->errors);
-        $this->assertInternalType('array', $results->errors->title);
-        $this->assertEquals('The title field is required.', $results->errors->title[0]);
+        $res = $this->call('POST', '/products');
+        $this->assertEquals(403, $res->getStatusCode());
     }
 
-    public function testCreateValidateAlias()
+    public function testCreateValidateFailure()
     {
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
         $res = $this->call('POST', '/products', [
-            'title' => 'Example Product',
             'alias' => 'This is invalid alias',
+            'price' => 'invalid',
+            'galleries' => 'invalid',
         ]);
 
         $this->assertEquals(400, $res->getStatusCode());
@@ -35,30 +36,21 @@ class ProductControllerTest extends TestCase
         $results = json_decode($res->getContent());
         $this->assertEquals('error', $results->status);
         $this->assertEquals('validation', $results->type);
-        $this->assertObjectHasAttribute('alias', $results->errors);
+        $this->assertObjectHasAttribute('title', $results->errors);
+        $this->assertEquals('The title field is required.', $results->errors->title[0]);
         $this->assertInternalType('array', $results->errors->alias);
         $this->assertEquals('The alias format is invalid.', $results->errors->alias[0]);
-    }
-
-    public function testCreateValidatePrice()
-    {
-        $res = $this->call('POST', '/products', [
-            'title' => 'Example Product',
-            'price' => 'invalid',
-        ]);
-
-        $this->assertEquals(400, $res->getStatusCode());
-
-        $results = json_decode($res->getContent());
-        $this->assertEquals('error', $results->status);
-        $this->assertEquals('validation', $results->type);
-        $this->assertObjectHasAttribute('price', $results->errors);
         $this->assertInternalType('array', $results->errors->price);
         $this->assertEquals('The price must be a number.', $results->errors->price[0]);
+        $this->assertInternalType('array', $results->errors->galleries);
+        $this->assertEquals('The galleries must be an array.', $results->errors->galleries[0]);
     }
 
     public function testCreateSuccess()
     {
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
         $res = $this->call('POST', '/products', [
             'title' => 'Example Product',
         ]);
@@ -76,6 +68,9 @@ class ProductControllerTest extends TestCase
 
     public function testCreateExistsAlias()
     {
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
         $product = factory(Product::class)->create();
 
         $res = $this->call('POST', '/products', [
@@ -95,6 +90,9 @@ class ProductControllerTest extends TestCase
 
     public function testCreateWithGalleries()
     {
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
         $galleries = [
             \Webpatser\Uuid\Uuid::generate(4) . '.jpg',
             \Webpatser\Uuid\Uuid::generate(4) . '.jpg',

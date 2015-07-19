@@ -2,6 +2,7 @@
 
 namespace PhpSoft\Illuminate\ShoppingCart\Controllers;
 
+use Input;
 use Validator;
 use Illuminate\Http\Request;
 
@@ -22,7 +23,15 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $products = Product::browse([
+            'order'     => [ 'id' => 'desc' ],
+            'limit'     => (int)Input::get('limit') ? (int)Input::get('limit') : 25,
+            'cursor'    => Input::get('cursor'),
+        ]);
+
+        return response()->json(arrayView('product/browse', [
+            'products' => $products,
+        ]), 200);
     }
 
     /**

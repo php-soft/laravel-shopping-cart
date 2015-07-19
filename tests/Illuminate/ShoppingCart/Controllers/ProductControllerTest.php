@@ -278,4 +278,62 @@ class ProductControllerTest extends TestCase
         $exists = Product::find($product->id);
         $this->assertNull($exists);
     }
+
+    public function testBrowseNotFound()
+    {
+        $res = $this->call('GET', '/products');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(0, count($results->entities));
+    }
+
+    public function testBrowseFound()
+    {
+        $products = [];
+        for ($i = 0; $i < 10; ++$i) {
+            $products[] = factory(Product::class)->create();
+        }
+
+        $res = $this->call('GET', '/products');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(count($products), count($results->entities));
+        for ($i = 0; $i < 10; ++$i) {
+            $this->assertEquals($products[9 - $i]->id, $results->entities[$i]->id);
+        }
+    }
+
+    public function testBrowseWithPagination()
+    {
+        $products = [];
+        for ($i = 0; $i < 10; ++$i) {
+            $products[] = factory(Product::class)->create();
+        }
+
+        // 5 items first
+        $res = $this->call('GET', '/products?limit=5');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(5, count($results->entities));
+        for ($i = 0; $i < 5; ++$i) {
+            $this->assertEquals($products[9 - $i]->id, $results->entities[$i]->id);
+        }
+
+        // 5 items next
+        $nextLink = $results->links->next->href;
+        $res = $this->call('GET', $nextLink);
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(5, count($results->entities));
+        for ($i = 0; $i < 5; ++$i) {
+            $this->assertEquals($products[4 - $i]->id, $results->entities[$i]->id);
+        }
+
+        // over list
+        $nextLink = $results->links->next->href;
+        $res = $this->call('GET', $nextLink);
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(0, count($results->entities));
+    }
 }

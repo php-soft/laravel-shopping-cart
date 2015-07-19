@@ -62,4 +62,33 @@ class Product extends Model
 
         return $this;
     }
+
+    /**
+     * List
+     * 
+     * @param  array  $options
+     * @return array
+     */
+    public static function browse($options = [])
+    {
+        if (empty($options)) {
+            return parent::all();
+        }
+
+        if (!empty($options['order'])) {
+            foreach ($options['order'] as $field => $direction) {
+                $find = parent::orderBy($field, $direction);
+            }
+        }
+
+        if (!empty($options['limit'])) {
+            $find = $find->take($options['limit']);
+        }
+
+        if (!empty($options['cursor'])) {
+            $find = $find->where('id', '<', $options['cursor']);
+        }
+
+        return $find->get();
+    }
 }

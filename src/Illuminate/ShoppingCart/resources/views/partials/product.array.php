@@ -1,5 +1,6 @@
 <?php
 
+$this->set('id', $product->id);
 $this->set('title', $product->title);
 $this->set('alias', $product->alias);
 $this->set('image', $product->image);

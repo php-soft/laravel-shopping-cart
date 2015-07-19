@@ -140,8 +140,18 @@ class ProductControllerTest extends TestCase
         $this->assertEquals($product->image, $results->entities[0]->image);
     }
 
+    public function testUpdateProductNotAuth()
+    {
+        $res = $this->call('PUT', '/products/0');
+
+        $this->assertEquals(401, $res->getStatusCode());
+    }
+
     public function testUpdateProductNotExists()
     {
+        $user = factory(App\User::class)->make();
+        Auth::login($user);
+
         $res = $this->call('PUT', '/products/0');
 
         $this->assertEquals(404, $res->getStatusCode());

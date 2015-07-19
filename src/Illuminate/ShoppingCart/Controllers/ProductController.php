@@ -84,6 +84,11 @@ class ProductController extends Controller
      */
     public function update($id, Request $request)
     {
+        // check authenticate
+        if (empty(Auth::user())) {
+            return response()->json(null, 401);
+        }
+
         $product = Product::find($id);
 
         // check exists

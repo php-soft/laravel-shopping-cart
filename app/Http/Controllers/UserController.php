@@ -16,10 +16,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $response = [
-          'created'  => true
-        ];
-        return response()->json($response, 200);
+        //
     }
 
     /**

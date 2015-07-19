@@ -142,6 +142,28 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // check authenticate
+        if (!$this->checkAuth()) {
+            return response()->json(null, 401);
+        }
+
+        // check permission
+        if (!$this->checkPermission('delete-product')) {
+            return response()->json(null, 403);
+        }
+
+        // retrieve product
+        $product = Product::find($id);
+
+        // check exists
+        if (empty($product)) {
+            return response()->json(null, 404);
+        }
+
+        if (!$product->delete()) {
+            return response()->json(null, 500);
+        }
+
+        return response()->json(null, 204);
     }
 }

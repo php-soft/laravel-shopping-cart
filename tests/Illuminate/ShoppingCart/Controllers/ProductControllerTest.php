@@ -243,4 +243,39 @@ class ProductControllerTest extends TestCase
         $results = json_decode($res->getContent());
         $this->assertEquals('The alias has already been taken.', $results->errors->alias[0]);
     }
+
+    public function testDeleteNotAuthAndPermission()
+    {
+        $res = $this->call('DELETE', '/products/0');
+        $this->assertEquals(401, $res->getStatusCode());
+
+        $user = factory(App\User::class)->make();
+        Auth::login($user);
+
+        $res = $this->call('DELETE', '/products/0');
+        $this->assertEquals(403, $res->getStatusCode());
+    }
+
+    public function testDeleteNotFound()
+    {
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
+        $res = $this->call('DELETE', '/products/0');
+        $this->assertEquals(404, $res->getStatusCode());
+    }
+
+    public function testDeleteSuccess()
+    {
+        $product = factory(Product::class)->create();
+
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
+        $res = $this->call('DELETE', "/products/{$product->id}");
+        $this->assertEquals(204, $res->getStatusCode());
+
+        $exists = Product::find($product->id);
+        $this->assertNull($exists);
+    }
 }

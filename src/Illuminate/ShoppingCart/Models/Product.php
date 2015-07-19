@@ -3,6 +3,7 @@
 namespace PhpSoft\Illuminate\ShoppingCart\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Exception;
 
 use Webpatser\Uuid\Uuid;
 use Illuminate\Support\Str;
@@ -41,5 +42,24 @@ class Product extends Model
         }
 
         return parent::create($attributes)->fresh();
+    }
+
+    /**
+     * Update the model in the database.
+     *
+     * @param  array  $attributes
+     * @return bool|int
+     */
+    public function update(array $attributes = [])
+    {
+        if (!empty($attributes['galleries'])) {
+            $attributes['galleries'] = json_encode($attributes['galleries']);
+        }
+
+        if (!parent::update($attributes)) {
+            throw new Exception('Cannot update product.');
+        }
+
+        return $this;
     }
 }

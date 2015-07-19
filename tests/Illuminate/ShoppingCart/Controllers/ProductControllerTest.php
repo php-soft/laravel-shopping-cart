@@ -63,7 +63,7 @@ class ProductControllerTest extends TestCase
             'title' => 'Example Product',
         ]);
 
-        $this->assertEquals(200, $res->getStatusCode());
+        $this->assertEquals(201, $res->getStatusCode());
 
         $results = json_decode($res->getContent());
         $this->assertObjectHasAttribute('entities', $results);
@@ -76,9 +76,7 @@ class ProductControllerTest extends TestCase
 
     public function testCreateExistsAlias()
     {
-        $product = Product::create([
-            'title' => 'Product 1',
-        ])->fresh();
+        $product = factory(Product::class)->create();
 
         $res = $this->call('POST', '/products', [
             'title' => 'Example Product',
@@ -107,7 +105,7 @@ class ProductControllerTest extends TestCase
             'galleries' => $galleries,
         ]);
 
-        $this->assertEquals(200, $res->getStatusCode());
+        $this->assertEquals(201, $res->getStatusCode());
 
         $results = json_decode($res->getContent());
         $this->assertObjectHasAttribute('entities', $results);
@@ -127,9 +125,7 @@ class ProductControllerTest extends TestCase
 
     public function testReadFound()
     {
-        $product = Product::create([
-            'title' => 'Product Example',
-        ])->fresh();
+        $product = factory(Product::class)->create();
 
         $res = $this->call('GET', '/products/' . $product->id);
 
@@ -138,10 +134,88 @@ class ProductControllerTest extends TestCase
         $results = json_decode($res->getContent());
         $this->assertObjectHasAttribute('entities', $results);
         $this->assertInternalType('array', $results->entities);
-        $this->assertEquals('Product Example', $results->entities[0]->title);
-        $this->assertNotNull($results->entities[0]->alias);
-        $this->assertEquals(null, $results->entities[0]->description);
-        $this->assertEquals(null, $results->entities[0]->image);
-        $this->assertEquals([], $results->entities[0]->galleries);
+        $this->assertEquals($product->title, $results->entities[0]->title);
+        $this->assertEquals($product->alias, $results->entities[0]->alias);
+        $this->assertEquals($product->description, $results->entities[0]->description);
+        $this->assertEquals($product->image, $results->entities[0]->image);
+    }
+
+    public function testUpdateProductNotExists()
+    {
+        $res = $this->call('PUT', '/products/0');
+
+        $this->assertEquals(404, $res->getStatusCode());
+    }
+
+    public function testUpdateValidateFailure()
+    {
+        $product = factory(Product::class)->create();
+
+        // no permission
+        $user = factory(App\User::class)->make();
+        Auth::login($user);
+        $res = $this->call('PUT', '/products/' . $product->id);
+        $this->assertEquals(403, $res->getStatusCode());
+
+        // has permission
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
+        // no title
+        $res = $this->call('PUT', '/products/' . $product->id, [
+            'alias' => 'Invalid Alias',
+            'price' => 'invalid',
+            'galleries' => 'invalid',
+        ]);
+        $this->assertEquals(400, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals('The alias format is invalid.', $results->errors->alias[0]);
+        $this->assertEquals('The price must be a number.', $results->errors->price[0]);
+        $this->assertEquals('The galleries must be an array.', $results->errors->galleries[0]);
+
+        // passing without change
+        $res = $this->call('PUT', '/products/' . $product->id);
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals($product->title, $results->entities[0]->title);
+        $this->assertEquals($product->alias, $results->entities[0]->alias);
+        $this->assertEquals($product->description, $results->entities[0]->description);
+        $this->assertEquals($product->price, $results->entities[0]->price);
+        $this->assertEquals($product->image, $results->entities[0]->image);
+
+        // passing with change
+        $res = $this->call('PUT', '/products/' . $product->id, [
+            'title' => 'New Title',
+            'alias' => 'new-alias',
+            'description' => 'New description',
+            'price' => 123456,
+            'image' => 'image.jpg',
+        ]);
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals('New Title', $results->entities[0]->title);
+        $this->assertEquals('new-alias', $results->entities[0]->alias);
+        $this->assertEquals('New description', $results->entities[0]->description);
+        $this->assertEquals(123456, $results->entities[0]->price);
+        $this->assertEquals('image.jpg', $results->entities[0]->image);
+
+        // change keep current alias
+        $res = $this->call('PUT', '/products/' . $product->id, [
+            'title' => 'New Title',
+            'alias' => 'new-alias',
+        ]);
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals('new-alias', $results->entities[0]->alias);
+
+        // change with exists alias
+        $product2 = factory(Product::class)->create();
+        $res = $this->call('PUT', '/products/' . $product->id, [
+            'title' => 'New Title',
+            'alias' => $product2->alias,
+        ]);
+        $this->assertEquals(400, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals('The alias has already been taken.', $results->errors->alias[0]);
     }
 }

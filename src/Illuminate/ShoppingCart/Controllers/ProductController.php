@@ -2,6 +2,7 @@
 
 namespace PhpSoft\Illuminate\ShoppingCart\Controllers;
 
+use Auth;
 use Validator;
 use Illuminate\Http\Request;
 
@@ -52,7 +53,7 @@ class ProductController extends Controller
 
         return response()->json(arrayView('product/read', [
             'product' => $product
-        ]), 200);
+        ]), 201);
     }
 
     /**
@@ -77,12 +78,46 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id
+     * @param  int     $id
+     * @param  Request $request
      * @return Response
      */
-    public function update($id)
+    public function update($id, Request $request)
     {
-        //
+        $product = Product::find($id);
+
+        // check exists
+        if (empty($product)) {
+            return response()->json(null, 404);
+        }
+
+        // check permission
+        if (!(Auth::user()->hasRole('admin') || Auth::user()->can('edit-product'))) {
+            return response()->json(null, 403);
+        }
+
+        // validate
+        $validator = Validator::make($request->all(), [
+            'title' => 'string',
+            'alias' => 'regex:/^[a-z0-9\-]+/|unique:shop_products,alias,' . $product->id,
+            'image' => 'string',
+            'description' => 'string',
+            'price' => 'numeric',
+            'galleries' => 'array',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(arrayView('errors/validation', [
+                'errors' => $validator->errors()
+            ]), 400);
+        }
+
+        // update
+        $product = $product->update($request->all());
+
+        // respond
+        return response()->json(arrayView('product/read', [
+            'product' => $product
+        ]), 200);
     }
 
     /**

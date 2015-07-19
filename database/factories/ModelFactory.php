@@ -19,3 +19,14 @@ $factory->define(App\User::class, function ($faker) {
         'remember_token' => str_random(10),
     ];
 });
+
+$factory->define(PhpSoft\Illuminate\ShoppingCart\Models\Product::class, function ($faker) {
+    return [
+        'title' => $faker->name,
+        'alias' => $faker->slug,
+        'image' => $faker->uuid,
+        'description' => $faker->text,
+        'price' => $faker->randomNumber(),
+        'galleries' => json_encode([ $faker->uuid, $faker->uuid, $faker->uuid ]),
+    ];
+});

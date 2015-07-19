@@ -98,16 +98,16 @@ class ProductController extends Controller
             return response()->json(null, 401);
         }
 
+        // check permission
+        if (!$this->checkPermission('edit-product')) {
+            return response()->json(null, 403);
+        }
+
         $product = Product::find($id);
 
         // check exists
         if (empty($product)) {
             return response()->json(null, 404);
-        }
-
-        // check permission
-        if (!$this->checkPermission('edit-product')) {
-            return response()->json(null, 403);
         }
 
         // validate

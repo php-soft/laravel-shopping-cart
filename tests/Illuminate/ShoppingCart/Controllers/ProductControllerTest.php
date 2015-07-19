@@ -138,20 +138,24 @@ class ProductControllerTest extends TestCase
         $this->assertEquals($product->image, $results->entities[0]->image);
     }
 
-    public function testUpdateProductNotAuth()
+    public function testUpdateNotAuthAndPermission()
     {
         $res = $this->call('PUT', '/products/0');
-
         $this->assertEquals(401, $res->getStatusCode());
-    }
 
-    public function testUpdateProductNotExists()
-    {
         $user = factory(App\User::class)->make();
         Auth::login($user);
 
         $res = $this->call('PUT', '/products/0');
+        $this->assertEquals(403, $res->getStatusCode());
+    }
 
+    public function testUpdateNotExists()
+    {
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
+        $res = $this->call('PUT', '/products/0');
         $this->assertEquals(404, $res->getStatusCode());
     }
 
@@ -159,17 +163,9 @@ class ProductControllerTest extends TestCase
     {
         $product = factory(Product::class)->create();
 
-        // no permission
-        $user = factory(App\User::class)->make();
-        Auth::login($user);
-        $res = $this->call('PUT', '/products/' . $product->id);
-        $this->assertEquals(403, $res->getStatusCode());
-
-        // has permission
         $user = factory(App\User::class)->make([ 'hasRole' => true ]);
         Auth::login($user);
 
-        // no title
         $res = $this->call('PUT', '/products/' . $product->id, [
             'alias' => 'Invalid Alias',
             'price' => 'invalid',
@@ -180,8 +176,15 @@ class ProductControllerTest extends TestCase
         $this->assertEquals('The alias format is invalid.', $results->errors->alias[0]);
         $this->assertEquals('The price must be a number.', $results->errors->price[0]);
         $this->assertEquals('The galleries must be an array.', $results->errors->galleries[0]);
+    }
 
-        // passing without change
+    public function testUpdateNothingChange()
+    {
+        $product = factory(Product::class)->create();
+
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
         $res = $this->call('PUT', '/products/' . $product->id);
         $this->assertEquals(200, $res->getStatusCode());
         $results = json_decode($res->getContent());
@@ -190,8 +193,15 @@ class ProductControllerTest extends TestCase
         $this->assertEquals($product->description, $results->entities[0]->description);
         $this->assertEquals($product->price, $results->entities[0]->price);
         $this->assertEquals($product->image, $results->entities[0]->image);
+    }
 
-        // passing with change
+    public function testUpdateWithNewInformation()
+    {
+        $product = factory(Product::class)->create();
+
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
         $res = $this->call('PUT', '/products/' . $product->id, [
             'title' => 'New Title',
             'alias' => 'new-alias',
@@ -215,12 +225,19 @@ class ProductControllerTest extends TestCase
         $this->assertEquals(200, $res->getStatusCode());
         $results = json_decode($res->getContent());
         $this->assertEquals('new-alias', $results->entities[0]->alias);
+    }
 
-        // change with exists alias
-        $product2 = factory(Product::class)->create();
+    public function testUpdateWithExistsAlias()
+    {
+        $product = factory(Product::class)->create();
+        $otherProduct = factory(Product::class)->create();
+
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
         $res = $this->call('PUT', '/products/' . $product->id, [
             'title' => 'New Title',
-            'alias' => $product2->alias,
+            'alias' => $otherProduct->alias,
         ]);
         $this->assertEquals(400, $res->getStatusCode());
         $results = json_decode($res->getContent());

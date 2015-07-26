@@ -26,7 +26,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
     public function setUp()
     {
         parent::setUp();
-        Artisan::call('migrate', [ '--path' => '/src/Illuminate/ShoppingCart/database/migrations' ]);
+        Artisan::call('migrate', [ '--path' => '/packages/Illuminate/ShoppingCart/database/migrations' ]);
     }
 
     public function tearDown()

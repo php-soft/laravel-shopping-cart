@@ -3,15 +3,15 @@
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
-class ProductTableSeeder extends Seeder
+class ShoppingCartModuleSeeder extends Seeder
 {
     /**
-     * Run the product table seeds.
+     * Run the shopping cart seeds.
      *
      * @return void
      */
     public function run()
     {
-        
+        //
     }
 }

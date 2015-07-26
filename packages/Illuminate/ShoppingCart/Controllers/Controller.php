@@ -14,8 +14,7 @@ class Controller extends AppController
      */
     public function __construct()
     {
-        $app = app();
-        $app['view']->addLocation(__DIR__.'/../resources/views');
+        //
     }
 
     /**

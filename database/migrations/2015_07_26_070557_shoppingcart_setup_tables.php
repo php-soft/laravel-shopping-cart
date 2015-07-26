@@ -19,7 +19,7 @@ class ShoppingcartSetupTables extends Migration
             $table->string('image')->nullable();
             $table->text('description')->nullable();
             $table->float('price')->default(0);
-            $table->json('galleries')->nullable()->default(json_encode([]));
+            $table->text('galleries')->nullable();
             $table->timestamps();
         });
     }

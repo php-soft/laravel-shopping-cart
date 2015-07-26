@@ -37,9 +37,10 @@ class Product extends Model
                 .'-'.Uuid::generate(4);
         }
 
-        if (!empty($attributes['galleries'])) {
-            $attributes['galleries'] = json_encode($attributes['galleries']);
+        if (empty($attributes['galleries'])) {
+            $attributes['galleries'] = [];
         }
+        $attributes['galleries'] = json_encode($attributes['galleries']);
 
         return parent::create($attributes)->fresh();
     }

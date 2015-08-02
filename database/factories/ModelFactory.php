@@ -30,3 +30,15 @@ $factory->define(PhpSoft\Illuminate\ShoppingCart\Models\Product::class, function
         'galleries' => json_encode([ $faker->uuid, $faker->uuid, $faker->uuid ]),
     ];
 });
+
+$factory->define(PhpSoft\Illuminate\ShoppingCart\Models\Category::class, function ($faker) {
+    return [
+        'name' => $faker->name,
+        'alias' => $faker->slug,
+        'image' => $faker->uuid,
+        'description' => $faker->text,
+        'parent_id' => 0,
+        'order' => 0,
+        'status' => 1,
+    ];
+});

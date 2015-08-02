@@ -20,6 +20,19 @@ class ShoppingcartSetupTables extends Migration
             $table->text('description')->nullable();
             $table->float('price')->default(0);
             $table->text('galleries')->nullable();
+            $table->integer('status')->default(1);
+            $table->timestamps();
+        });
+
+        Schema::create('shop_categories', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->string('alias')->nullable();
+            $table->string('image')->nullable();
+            $table->text('description')->nullable();
+            $table->unsignedInteger('parent_id')->default(0);
+            $table->integer('order')->default(0);
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }
@@ -32,5 +45,6 @@ class ShoppingcartSetupTables extends Migration
     public function down()
     {
         Schema::drop('shop_products');
+        Schema::drop('shop_categories');
     }
 }

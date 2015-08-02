@@ -48,6 +48,14 @@ $ php artisan db:seed --class=ShoppingCartModuleSeeder
 Add routes in `app/Http/routes.php`
 
 ```php
+Route::get('categories', '\PhpSoft\Illuminate\ShoppingCart\Controllers\CategoryController@index');
+Route::get('categories/{id}', '\PhpSoft\Illuminate\ShoppingCart\Controllers\CategoryController@show');
+Route::group(['middleware'=>'auth'], function() { // use middleware jwt.auth if use JSON Web Token
+    Route::post('categories', '\PhpSoft\Illuminate\ShoppingCart\Controllers\CategoryController@store');
+    Route::put('categories/{id}', '\PhpSoft\Illuminate\ShoppingCart\Controllers\CategoryController@update');
+    Route::delete('categories/{id}', '\PhpSoft\Illuminate\ShoppingCart\Controllers\CategoryController@destroy');
+});
+
 Route::get('products', '\PhpSoft\Illuminate\ShoppingCart\Controllers\ProductController@index');
 Route::get('products/{id}', '\PhpSoft\Illuminate\ShoppingCart\Controllers\ProductController@show');
 Route::group(['middleware'=>'auth'], function() { // use middleware jwt.auth if use JSON Web Token

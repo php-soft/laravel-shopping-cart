@@ -38,9 +38,8 @@ class Product extends Model
         }
 
         if (empty($attributes['galleries'])) {
-            $attributes['galleries'] = [];
+            $attributes['galleries'] = json_encode([]);
         }
-        $attributes['galleries'] = json_encode($attributes['galleries']);
 
         return parent::create($attributes)->fresh();
     }
@@ -54,9 +53,8 @@ class Product extends Model
     public function update(array $attributes = [])
     {
         if (empty($attributes['galleries'])) {
-            $attributes['galleries'] = [];
+            $attributes['galleries'] = json_encode([]);
         }
-        $attributes['galleries'] = json_encode($attributes['galleries']);
 
         if (!parent::update($attributes)) {
             throw new Exception('Cannot update product.');

@@ -17,6 +17,28 @@ use PhpSoft\Illuminate\ShoppingCart\Controllers\Controller;
 class ProductController extends Controller
 {
     /**
+     * Construct controller
+     */
+    public function __construct()
+    {
+        Validator::extend('json', function($attribute, $value, $parameters) {
+
+            if (!is_string($value)) {
+                return false;
+            }
+
+            json_decode($value);
+
+            return json_last_error() == JSON_ERROR_NONE;
+        });
+
+        Validator::replacer('json', function($message, $attribute, $rule, $parameters) {
+
+            return 'The ' . $attribute . ' must be an JSON encoding.';
+        });
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return Response
@@ -58,7 +80,7 @@ class ProductController extends Controller
             'image' => 'string',
             'description' => 'string',
             'price' => 'numeric',
-            'galleries' => 'array',
+            'galleries' => 'string|json',
         ]);
 
         if ($validator->fails()) {
@@ -126,7 +148,7 @@ class ProductController extends Controller
             'image' => 'string',
             'description' => 'string',
             'price' => 'numeric',
-            'galleries' => 'array',
+            'galleries' => 'string|json',
         ]);
         if ($validator->fails()) {
             return response()->json(arrayView('errors/validation', [

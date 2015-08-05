@@ -93,6 +93,41 @@ class CategoryControllerTest extends TestCase
         $this->assertEquals('The alias has already been taken.', $results->errors->alias[0]);
     }
 
+    public function testCreateWithParentIdNotExists()
+    {
+        $user = Mockery::mock('user');
+        $user->shouldReceive('can')->andReturn(true);
+        Auth::shouldReceive('user')->andReturn($user);
+
+        $res = $this->call('POST', '/categories', [
+            'name' => 'Example Category',
+            'parent_id' => 0,
+        ]);
+
+        $this->assertEquals(400, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals('error', $results->status);
+        $this->assertEquals('The selected parent id is invalid.', $results->errors->parent_id[0]);
+    }
+
+    public function testCreateWithParentIdExists()
+    {
+        $categoryParent = factory(Category::class)->create();
+
+        $user = Mockery::mock('user');
+        $user->shouldReceive('can')->andReturn(true);
+        Auth::shouldReceive('user')->andReturn($user);
+
+        $res = $this->call('POST', '/categories', [
+            'name' => 'Example Category',
+            'parent_id' => $categoryParent->id,
+        ]);
+
+        $this->assertEquals(201, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals($categoryParent->id, $results->entities[0]->parent_id);
+    }
+
     public function testReadNotFound()
     {
         $res = $this->call('GET', '/categories/0');
@@ -220,6 +255,44 @@ class CategoryControllerTest extends TestCase
         $this->assertEquals(400, $res->getStatusCode());
         $results = json_decode($res->getContent());
         $this->assertEquals('The alias has already been taken.', $results->errors->alias[0]);
+    }
+
+    public function testUpdateWithParentIdNotExists()
+    {
+        $category = factory(Category::class)->create();
+
+        $user = Mockery::mock('user');
+        $user->shouldReceive('can')->andReturn(true);
+        Auth::shouldReceive('user')->andReturn($user);
+
+        $res = $this->call('PUT', '/categories/' . $category->id, [
+            'name' => 'Example Category',
+            'parent_id' => 0,
+        ]);
+
+        $this->assertEquals(400, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals('error', $results->status);
+        $this->assertEquals('The selected parent id is invalid.', $results->errors->parent_id[0]);
+    }
+
+    public function testUpdateWithParentIdExists()
+    {
+        $category = factory(Category::class)->create();
+        $categoryParent = factory(Category::class)->create();
+
+        $user = Mockery::mock('user');
+        $user->shouldReceive('can')->andReturn(true);
+        Auth::shouldReceive('user')->andReturn($user);
+
+        $res = $this->call('PUT', '/categories/' . $category->id, [
+            'name' => 'Example Category',
+            'parent_id' => $categoryParent->id,
+        ]);
+
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals($categoryParent->id, $results->entities[0]->parent_id);
     }
 
     public function testDeleteNotAuthAndPermission()

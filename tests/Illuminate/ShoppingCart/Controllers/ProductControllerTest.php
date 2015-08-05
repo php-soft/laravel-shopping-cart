@@ -43,7 +43,7 @@ class ProductControllerTest extends TestCase
         $this->assertInternalType('array', $results->errors->price);
         $this->assertEquals('The price must be a number.', $results->errors->price[0]);
         $this->assertInternalType('array', $results->errors->galleries);
-        $this->assertEquals('The galleries must be an JSON encoding.', $results->errors->galleries[0]);
+        $this->assertEquals('The galleries must be an array.', $results->errors->galleries[0]);
     }
 
     public function testCreateSuccess()
@@ -100,7 +100,7 @@ class ProductControllerTest extends TestCase
         ];
         $res = $this->call('POST', '/products', [
             'title' => 'Example Product',
-            'galleries' => json_encode($galleries),
+            'galleries' => $galleries,
         ]);
 
         $this->assertEquals(201, $res->getStatusCode());
@@ -175,7 +175,7 @@ class ProductControllerTest extends TestCase
         $results = json_decode($res->getContent());
         $this->assertEquals('The alias format is invalid.', $results->errors->alias[0]);
         $this->assertEquals('The price must be a number.', $results->errors->price[0]);
-        $this->assertEquals('The galleries must be an JSON encoding.', $results->errors->galleries[0]);
+        $this->assertEquals('The galleries must be an array.', $results->errors->galleries[0]);
     }
 
     public function testUpdateNothingChange()

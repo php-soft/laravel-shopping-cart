@@ -80,7 +80,7 @@ class ProductController extends Controller
             'image' => 'string',
             'description' => 'string',
             'price' => 'numeric',
-            'galleries' => 'string|json',
+            'galleries' => 'array',
         ]);
 
         if ($validator->fails()) {
@@ -148,7 +148,7 @@ class ProductController extends Controller
             'image' => 'string',
             'description' => 'string',
             'price' => 'numeric',
-            'galleries' => 'string|json',
+            'galleries' => 'array',
         ]);
         if ($validator->fails()) {
             return response()->json(arrayView('errors/validation', [

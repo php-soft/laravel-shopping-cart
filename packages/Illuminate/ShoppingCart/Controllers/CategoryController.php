@@ -57,7 +57,7 @@ class CategoryController extends Controller
             'alias' => 'regex:/^[a-z0-9\-]+/|unique:shop_categories',
             'image' => 'string',
             'description' => 'string',
-            'parent_id' => 'numeric',
+            'parent_id' => 'numeric|exists:shop_categories,id',
             'order' => 'numeric',
             'status' => 'numeric',
         ]);
@@ -126,7 +126,7 @@ class CategoryController extends Controller
             'alias' => 'regex:/^[a-z0-9\-]+/|unique:shop_categories,alias,' . $category->id,
             'image' => 'string',
             'description' => 'string',
-            'parent_id' => 'numeric',
+            'parent_id' => 'numeric|exists:shop_categories,id',
             'order' => 'numeric',
             'status' => 'numeric',
         ]);

@@ -243,6 +243,23 @@ class CategoryControllerTest extends TestCase
         $this->assertEquals(0, $results->entities[0]->parent_id);
     }
 
+    public function testUpdateWithBlankAlias()
+    {
+        $category = factory(Category::class)->create();
+
+        $user = Mockery::mock('user');
+        $user->shouldReceive('can')->andReturn(true);
+        Auth::shouldReceive('user')->andReturn($user);
+
+        $res = $this->call('PUT', '/categories/' . $category->id, [
+            'title' => 'New Title',
+            'alias' => '',
+        ]);
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertNotEquals($category->alias, $results->entities[0]->alias);
+    }
+
     public function testUpdateWithExistsAlias()
     {
         $category = factory(Category::class)->create();

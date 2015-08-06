@@ -227,6 +227,23 @@ class ProductControllerTest extends TestCase
         $this->assertEquals('new-alias', $results->entities[0]->alias);
     }
 
+    public function testUpdateWithBlankAlias()
+    {
+        $product = factory(Product::class)->create();
+
+        $user = Mockery::mock('user');
+        $user->shouldReceive('can')->andReturn(true);
+        Auth::shouldReceive('user')->andReturn($user);
+
+        $res = $this->call('PUT', '/products/' . $product->id, [
+            'title' => 'New Title',
+            'alias' => '',
+        ]);
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertNotEquals($product->alias, $results->entities[0]->alias);
+    }
+
     public function testUpdateWithExistsAlias()
     {
         $product = factory(Product::class)->create();

@@ -56,6 +56,7 @@ class CategoryControllerTest extends TestCase
 
         $res = $this->call('POST', '/categories', [
             'name' => 'Example Category',
+            'parent_id' => 0,
         ]);
 
         $this->assertEquals(201, $res->getStatusCode());
@@ -101,7 +102,7 @@ class CategoryControllerTest extends TestCase
 
         $res = $this->call('POST', '/categories', [
             'name' => 'Example Category',
-            'parent_id' => 0,
+            'parent_id' => 1,
         ]);
 
         $this->assertEquals(400, $res->getStatusCode());
@@ -223,6 +224,7 @@ class CategoryControllerTest extends TestCase
             'name' => 'New Name',
             'alias' => 'new-alias',
             'description' => 'New description',
+            'parent_id' => 0,
         ]);
         $this->assertEquals(200, $res->getStatusCode());
         $results = json_decode($res->getContent());
@@ -238,6 +240,7 @@ class CategoryControllerTest extends TestCase
         $this->assertEquals(200, $res->getStatusCode());
         $results = json_decode($res->getContent());
         $this->assertEquals('new-alias', $results->entities[0]->alias);
+        $this->assertEquals(0, $results->entities[0]->parent_id);
     }
 
     public function testUpdateWithExistsAlias()
@@ -267,7 +270,26 @@ class CategoryControllerTest extends TestCase
 
         $res = $this->call('PUT', '/categories/' . $category->id, [
             'name' => 'Example Category',
-            'parent_id' => 0,
+            'parent_id' => 99,
+        ]);
+
+        $this->assertEquals(400, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals('error', $results->status);
+        $this->assertEquals('The selected parent id is invalid.', $results->errors->parent_id[0]);
+    }
+
+    public function testUpdateWithParentIdIsSelf()
+    {
+        $category = factory(Category::class)->create();
+
+        $user = Mockery::mock('user');
+        $user->shouldReceive('can')->andReturn(true);
+        Auth::shouldReceive('user')->andReturn($user);
+
+        $res = $this->call('PUT', '/categories/' . $category->id, [
+            'name' => 'Example Category',
+            'parent_id' => $category->id,
         ]);
 
         $this->assertEquals(400, $res->getStatusCode());

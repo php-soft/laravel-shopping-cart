@@ -53,6 +53,15 @@ class Product extends Model
      */
     public function update(array $attributes = [])
     {
+        if (isset($attributes['alias']) && empty($attributes['alias'])) {
+            $title = $this->title;
+            if (isset($attributes['title'])) {
+                $title = $attributes['title'];
+            }
+            $attributes['alias'] = Str::slug($title)
+                .'-'.Uuid::generate(4);
+        }
+
         if (empty($attributes['galleries'])) {
             $attributes['galleries'] = [];
         }

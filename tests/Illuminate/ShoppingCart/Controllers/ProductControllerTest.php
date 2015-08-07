@@ -2,12 +2,8 @@
 
 use PhpSoft\Illuminate\ShoppingCart\Models\Product;
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-
 class ProductControllerTest extends TestCase
 {
-    use WithoutMiddleware;
-
     public function testCreateNotAuthAndPermission()
     {
         $res = $this->call('POST', '/products');
@@ -231,9 +227,8 @@ class ProductControllerTest extends TestCase
     {
         $product = factory(Product::class)->create();
 
-        $user = Mockery::mock('user');
-        $user->shouldReceive('can')->andReturn(true);
-        Auth::shouldReceive('user')->andReturn($user);
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
 
         $res = $this->call('PUT', '/products/' . $product->id, [
             'title' => 'New Title',

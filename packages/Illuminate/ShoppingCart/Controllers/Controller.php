@@ -16,24 +16,4 @@ class Controller extends AppController
     {
         //
     }
-
-    /**
-     * Check authentication
-     * 
-     * @return boolean
-     */
-    public function checkAuth()
-    {
-        return !empty(Auth::user());
-    }
-
-    /**
-     * Check permission
-     * 
-     * @return boolean
-     */
-    public function checkPermission($permission)
-    {
-        return Auth::user()->can($permission) || Auth::user()->hasRole('admin');
-    }
 }

@@ -42,16 +42,6 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        // check authenticate
-        if (!$this->checkAuth()) {
-            return response()->json(null, 401);
-        }
-
-        // check permission
-        if (!$this->checkPermission('create-category')) {
-            return response()->json(null, 403);
-        }
-
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'alias' => 'regex:/^[a-z0-9\-]+/|unique:shop_categories',
@@ -103,16 +93,6 @@ class CategoryController extends Controller
      */
     public function update($id, Request $request)
     {
-        // check authenticate
-        if (!$this->checkAuth()) {
-            return response()->json(null, 401);
-        }
-
-        // check permission
-        if (!$this->checkPermission('edit-category')) {
-            return response()->json(null, 403);
-        }
-
         $category = Category::find($id);
 
         // check exists
@@ -153,16 +133,6 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        // check authenticate
-        if (!$this->checkAuth()) {
-            return response()->json(null, 401);
-        }
-
-        // check permission
-        if (!$this->checkPermission('delete-category')) {
-            return response()->json(null, 403);
-        }
-
         // retrieve category
         $category = Category::find($id);
 

@@ -2,12 +2,8 @@
 
 use PhpSoft\Illuminate\ShoppingCart\Models\Category;
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-
 class CategoryControllerTest extends TestCase
 {
-    use WithoutMiddleware;
-
     public function testCreateNotAuthAndPermission()
     {
         $res = $this->call('POST', '/categories');
@@ -96,9 +92,8 @@ class CategoryControllerTest extends TestCase
 
     public function testCreateWithParentIdNotExists()
     {
-        $user = Mockery::mock('user');
-        $user->shouldReceive('can')->andReturn(true);
-        Auth::shouldReceive('user')->andReturn($user);
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
 
         $res = $this->call('POST', '/categories', [
             'name' => 'Example Category',
@@ -115,9 +110,8 @@ class CategoryControllerTest extends TestCase
     {
         $categoryParent = factory(Category::class)->create();
 
-        $user = Mockery::mock('user');
-        $user->shouldReceive('can')->andReturn(true);
-        Auth::shouldReceive('user')->andReturn($user);
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
 
         $res = $this->call('POST', '/categories', [
             'name' => 'Example Category',
@@ -247,9 +241,8 @@ class CategoryControllerTest extends TestCase
     {
         $category = factory(Category::class)->create();
 
-        $user = Mockery::mock('user');
-        $user->shouldReceive('can')->andReturn(true);
-        Auth::shouldReceive('user')->andReturn($user);
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
 
         $res = $this->call('PUT', '/categories/' . $category->id, [
             'title' => 'New Title',
@@ -281,9 +274,8 @@ class CategoryControllerTest extends TestCase
     {
         $category = factory(Category::class)->create();
 
-        $user = Mockery::mock('user');
-        $user->shouldReceive('can')->andReturn(true);
-        Auth::shouldReceive('user')->andReturn($user);
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
 
         $res = $this->call('PUT', '/categories/' . $category->id, [
             'name' => 'Example Category',
@@ -300,9 +292,8 @@ class CategoryControllerTest extends TestCase
     {
         $category = factory(Category::class)->create();
 
-        $user = Mockery::mock('user');
-        $user->shouldReceive('can')->andReturn(true);
-        Auth::shouldReceive('user')->andReturn($user);
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
 
         $res = $this->call('PUT', '/categories/' . $category->id, [
             'name' => 'Example Category',
@@ -320,9 +311,8 @@ class CategoryControllerTest extends TestCase
         $category = factory(Category::class)->create();
         $categoryParent = factory(Category::class)->create();
 
-        $user = Mockery::mock('user');
-        $user->shouldReceive('can')->andReturn(true);
-        Auth::shouldReceive('user')->andReturn($user);
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
 
         $res = $this->call('PUT', '/categories/' . $category->id, [
             'name' => 'Example Category',

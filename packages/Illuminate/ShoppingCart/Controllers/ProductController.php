@@ -64,16 +64,6 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // check authenticate
-        if (!$this->checkAuth()) {
-            return response()->json(null, 401);
-        }
-
-        // check permission
-        if (!$this->checkPermission('create-product')) {
-            return response()->json(null, 403);
-        }
-
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'alias' => 'regex:/^[a-z0-9\-]+/|unique:shop_products',
@@ -124,16 +114,6 @@ class ProductController extends Controller
      */
     public function update($id, Request $request)
     {
-        // check authenticate
-        if (!$this->checkAuth()) {
-            return response()->json(null, 401);
-        }
-
-        // check permission
-        if (!$this->checkPermission('edit-product')) {
-            return response()->json(null, 403);
-        }
-
         $product = Product::find($id);
 
         // check exists
@@ -173,16 +153,6 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        // check authenticate
-        if (!$this->checkAuth()) {
-            return response()->json(null, 401);
-        }
-
-        // check permission
-        if (!$this->checkPermission('delete-product')) {
-            return response()->json(null, 403);
-        }
-
         // retrieve product
         $product = Product::find($id);
 

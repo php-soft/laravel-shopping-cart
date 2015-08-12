@@ -102,4 +102,21 @@ class Product extends Model
 
         return $find->get();
     }
+
+    /**
+     * Find by id or alias
+     *
+     * @param  string $idOrAlias
+     * @return Product
+     */
+    public static function findByIdOrAlias($idOrAlias)
+    {
+        $product = parent::find($idOrAlias);
+
+        if ($product) {
+            return $product;
+        }
+
+        return parent::where('alias', $idOrAlias)->first();
+    }
 }

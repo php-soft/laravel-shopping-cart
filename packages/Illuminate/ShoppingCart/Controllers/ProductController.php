@@ -94,7 +94,7 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        $product = Product::find($id);
+        $product = Product::findByIdOrAlias($id);
 
         if (empty($product)) {
             return response()->json(null, 404);

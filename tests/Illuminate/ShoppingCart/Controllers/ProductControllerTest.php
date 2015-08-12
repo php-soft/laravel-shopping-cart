@@ -113,7 +113,9 @@ class ProductControllerTest extends TestCase
     public function testReadNotFound()
     {
         $res = $this->call('GET', '/products/0');
+        $this->assertEquals(404, $res->getStatusCode());
 
+        $res = $this->call('GET', '/products/not-found');
         $this->assertEquals(404, $res->getStatusCode());
     }
 
@@ -122,6 +124,23 @@ class ProductControllerTest extends TestCase
         $product = factory(Product::class)->create();
 
         $res = $this->call('GET', '/products/' . $product->id);
+
+        $this->assertEquals(200, $res->getStatusCode());
+
+        $results = json_decode($res->getContent());
+        $this->assertObjectHasAttribute('entities', $results);
+        $this->assertInternalType('array', $results->entities);
+        $this->assertEquals($product->title, $results->entities[0]->title);
+        $this->assertEquals($product->alias, $results->entities[0]->alias);
+        $this->assertEquals($product->description, $results->entities[0]->description);
+        $this->assertEquals($product->image, $results->entities[0]->image);
+    }
+
+    public function testReadWithAlias()
+    {
+        $product = factory(Product::class)->create();
+
+        $res = $this->call('GET', '/products/' . $product->alias);
 
         $this->assertEquals(200, $res->getStatusCode());
 

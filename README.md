@@ -33,7 +33,7 @@ Now generate the migration:
 $ php artisan shoppingcart:migrate
 ```
 
-It will generate the `<timestamp>_shoppingcart_setup_tables.php` migration. You may now run it with the artisan migrate command:
+It will generate the migration files. You may now run it with the artisan migrate command:
 
 ```sh
 $ php artisan migrate

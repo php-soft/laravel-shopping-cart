@@ -1,6 +1,7 @@
 <?php
 
 use PhpSoft\Illuminate\ShoppingCart\Models\Product;
+use PhpSoft\Illuminate\ShoppingCart\Models\Category;
 
 class ProductControllerTest extends TestCase
 {
@@ -25,6 +26,7 @@ class ProductControllerTest extends TestCase
             'alias' => 'This is invalid alias',
             'price' => 'invalid',
             'galleries' => 'invalid',
+            'categories' => 'invalid',
         ]);
 
         $this->assertEquals(400, $res->getStatusCode());
@@ -40,6 +42,7 @@ class ProductControllerTest extends TestCase
         $this->assertEquals('The price must be a number.', $results->errors->price[0]);
         $this->assertInternalType('array', $results->errors->galleries);
         $this->assertEquals('The galleries must be an array.', $results->errors->galleries[0]);
+        $this->assertEquals('The categories must be an array.', $results->errors->categories[0]);
     }
 
     public function testCreateSuccess()
@@ -108,6 +111,31 @@ class ProductControllerTest extends TestCase
         $this->assertEquals($galleries[0], $results->entities[0]->galleries[0]);
         $this->assertEquals($galleries[1], $results->entities[0]->galleries[1]);
         $this->assertEquals($galleries[2], $results->entities[0]->galleries[2]);
+    }
+
+    public function testCreateWithCategories()
+    {
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
+        $category1 = factory(Category::class)->create();
+        $category2 = factory(Category::class)->create();
+
+        $categories = [
+            $category1->id,
+            $category2->id,
+        ];
+        $res = $this->call('POST', '/products', [
+            'title' => 'Example Product',
+            'categories' => $categories,
+        ]);
+
+        $this->assertEquals(201, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $productId = $results->entities[0]->id;
+
+        $product = Product::find($productId);
+        $this->assertEquals(2, count($product->categories));
     }
 
     public function testReadNotFound()

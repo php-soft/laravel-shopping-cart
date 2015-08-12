@@ -25,6 +25,14 @@ class Product extends Model
     protected $fillable = [ 'title', 'alias', 'image', 'description', 'price', 'galleries'];
 
     /**
+     * Get the categories for the product.
+     */
+    public function categories()
+    {
+        return $this->belongsToMany('PhpSoft\Illuminate\ShoppingCart\Models\Category', 'shop_category_product');
+    }
+
+    /**
      * Create Product
      * 
      * @param  array  $attributes        Attributes

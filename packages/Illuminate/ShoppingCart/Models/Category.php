@@ -28,6 +28,14 @@ class Category extends Model
     protected $fillable = [ 'name', 'alias', 'image', 'description', 'parent_id', 'order', 'status'];
 
     /**
+     * Get the products for the category.
+     */
+    public function products()
+    {
+        return $this->belongsToMany('PhpSoft\Illuminate\ShoppingCart\Models\Product', 'shop_category_product');
+    }
+
+    /**
      * Create Category
      * 
      * @param  array  $attributes        Attributes

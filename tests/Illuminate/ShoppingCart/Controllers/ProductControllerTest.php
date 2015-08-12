@@ -194,12 +194,14 @@ class ProductControllerTest extends TestCase
             'alias' => 'Invalid Alias',
             'price' => 'invalid',
             'galleries' => 'invalid',
+            'categories' => 'invalid',
         ]);
         $this->assertEquals(400, $res->getStatusCode());
         $results = json_decode($res->getContent());
         $this->assertEquals('The alias format is invalid.', $results->errors->alias[0]);
         $this->assertEquals('The price must be a number.', $results->errors->price[0]);
         $this->assertEquals('The galleries must be an array.', $results->errors->galleries[0]);
+        $this->assertEquals('The categories must be an array.', $results->errors->categories[0]);
     }
 
     public function testUpdateNothingChange()
@@ -282,6 +284,36 @@ class ProductControllerTest extends TestCase
         $this->assertEquals(400, $res->getStatusCode());
         $results = json_decode($res->getContent());
         $this->assertEquals('The alias has already been taken.', $results->errors->alias[0]);
+    }
+
+    public function testUpdateWithCategories()
+    {
+        $product = factory(Product::class)->create();
+        $category1 = factory(Category::class)->create();
+        $category2 = factory(Category::class)->create();
+        $product->categories()->attach($category1->id);
+
+        // before update: have one category
+        $this->assertEquals(1, count($product->categories));
+
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
+        $categories = [
+            $category1->id,
+            $category2->id,
+        ];
+        $res = $this->call('PUT', '/products/' . $product->id, [
+            'title' => 'New Title',
+            'categories' => $categories,
+        ]);
+
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+
+        // after update: have two categories
+        $product = Product::find($product->id);
+        $this->assertEquals(2, count($product->categories));
     }
 
     public function testDeleteNotAuthAndPermission()

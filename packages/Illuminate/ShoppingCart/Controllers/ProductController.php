@@ -63,12 +63,7 @@ class ProductController extends Controller
 
         // create link between categories and product
         if ($request->categories) {
-            $categories = [];
-            foreach ($request->categories as $categoryId) {
-                $categories[] = Category::find($categoryId);
-
-            }
-            $product->categories()->saveMany($categories);
+            $product->categories()->sync($request->categories);
         }
 
         return response()->json(arrayView('product/read', [
@@ -131,14 +126,9 @@ class ProductController extends Controller
         $product = $product->update($request->all());
 
         // create/update link between categories and product
-        // if ($request->categories) {
-        //     foreach ($request->categories as $categoryId) {
-        //         LinkCategoryProduct::create([
-        //             'category_id' => $categoryId,
-        //             'product_id' => $product->id,
-        //         ]);
-        //     }
-        // }
+        if ($request->categories) {
+            $product->categories()->sync($request->categories);
+        }
 
         // respond
         return response()->json(arrayView('product/read', [

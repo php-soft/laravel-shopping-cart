@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 
 use PhpSoft\Illuminate\ShoppingCart\Models\Product;
+use PhpSoft\Illuminate\ShoppingCart\Models\Category;
 use PhpSoft\Illuminate\ShoppingCart\Controllers\Controller;
 
 /**
@@ -16,28 +17,6 @@ use PhpSoft\Illuminate\ShoppingCart\Controllers\Controller;
  */
 class ProductController extends Controller
 {
-    /**
-     * Construct controller
-     */
-    public function __construct()
-    {
-        Validator::extend('json', function($attribute, $value, $parameters) {
-
-            if (!is_string($value)) {
-                return false;
-            }
-
-            json_decode($value);
-
-            return json_last_error() == JSON_ERROR_NONE;
-        });
-
-        Validator::replacer('json', function($message, $attribute, $rule, $parameters) {
-
-            return 'The ' . $attribute . ' must be an JSON encoding.';
-        });
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -71,6 +50,7 @@ class ProductController extends Controller
             'description' => 'string',
             'price' => 'numeric',
             'galleries' => 'array',
+            'categories' => 'array',
         ]);
 
         if ($validator->fails()) {
@@ -80,6 +60,11 @@ class ProductController extends Controller
         }
 
         $product = Product::create($request->all());
+
+        // create link between categories and product
+        if ($request->categories) {
+            $product->categories()->sync($request->categories);
+        }
 
         return response()->json(arrayView('product/read', [
             'product' => $product
@@ -129,6 +114,7 @@ class ProductController extends Controller
             'description' => 'string',
             'price' => 'numeric',
             'galleries' => 'array',
+            'categories' => 'array',
         ]);
         if ($validator->fails()) {
             return response()->json(arrayView('errors/validation', [
@@ -138,6 +124,11 @@ class ProductController extends Controller
 
         // update
         $product = $product->update($request->all());
+
+        // create/update link between categories and product
+        if ($request->categories) {
+            $product->categories()->sync($request->categories);
+        }
 
         // respond
         return response()->json(arrayView('product/read', [

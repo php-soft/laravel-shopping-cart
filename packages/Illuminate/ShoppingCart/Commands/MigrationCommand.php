@@ -41,12 +41,14 @@ class MigrationCommand extends Command
      */
     protected function createMigration()
     {
-        $migration = file_get_contents(__DIR__ . '/migrations/shoppingcart_setup_tables.php');
-        $migration = '<?php' . $migration;
-
-        $filename = date('Y_m_d_His').'_shoppingcart_setup_tables';
-        file_put_contents(base_path('/database/migrations').'/'.$filename.'.php', $migration);
-
-        $this->line("<info>Created Migration:</info> $filename");
+        $files = scandir(__DIR__ . '/migrations');
+        foreach ($files as $file) {
+            if ($file == '.' || $file == '..' || file_exists(base_path('/database/migrations') . '/' . $file)) {
+                continue;
+            }
+            if (copy(__DIR__ . '/migrations/' . $file, base_path('/database/migrations') . '/' . $file)) {
+                $this->line("<info>Created Migration:</info> $file");
+            }
+        }
     }
 }

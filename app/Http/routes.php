@@ -33,6 +33,8 @@ Route::group(['middleware'=>'auth'], function() { // use middleware jwt.auth if 
     ]);
 });
 
+Route::get('categories/{id}/products', '\PhpSoft\Illuminate\ShoppingCart\Controllers\ProductController@index');
+
 // products resource
 Route::get('products', '\PhpSoft\Illuminate\ShoppingCart\Controllers\ProductController@index');
 Route::get('products/{id}', '\PhpSoft\Illuminate\ShoppingCart\Controllers\ProductController@show');

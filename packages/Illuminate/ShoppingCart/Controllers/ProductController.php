@@ -22,13 +22,24 @@ class ProductController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index($categoryId = null)
     {
-        $products = Product::browse([
-            'order'     => [ 'id' => 'desc' ],
+        $options = [
+            'order'     => [ 'shop_products.id' => 'desc' ],
             'limit'     => (int)Input::get('limit') ? (int)Input::get('limit') : 25,
             'cursor'    => Input::get('cursor'),
-        ]);
+        ];
+
+        if ($categoryId != null) {
+            $category = Category::findByIdOrAlias($categoryId);
+            if (empty($category)) {
+                return response()->json(null, 404);
+            }
+
+            $products = Product::browseByCategory($category, $options);
+        } else {
+            $products = Product::browse($options);
+        }
 
         return response()->json(arrayView('product/browse', [
             'products' => $products,

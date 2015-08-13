@@ -112,6 +112,34 @@ class Product extends Model
     }
 
     /**
+     * Find products by category
+     *
+     * @param  Category $category
+     * @param  array    $options
+     * @return array
+     */
+    public static function browseByCategory($category, $options = [])
+    {
+        $find = $category->products();
+
+        if (!empty($options['order'])) {
+            foreach ($options['order'] as $field => $direction) {
+                $find = $find->orderBy($field, $direction);
+            }
+        }
+
+        if (!empty($options['limit'])) {
+            $find = $find->take($options['limit']);
+        }
+
+        if (!empty($options['cursor'])) {
+            $find = $find->where('shop_products.id', '<', $options['cursor']);
+        }
+
+        return $find->get();
+    }
+
+    /**
      * Find by id or alias
      *
      * @param  string $idOrAlias

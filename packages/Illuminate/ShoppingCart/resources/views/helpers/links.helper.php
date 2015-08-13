@@ -20,12 +20,11 @@ function helper_links($items = [])
     if (count($items)) {
         $last = $items[count($items) - 1];
 
-        $currentRoute = Route::current();
         $queries = Input::all();
         $queries = array_merge($queries, [
             'cursor' => $last->id,
         ]);
-        $hrefNext = url($currentRoute->getPath()) . '?' . http_build_query($queries);
+        $hrefNext = url(Request::url()) . '?' . http_build_query($queries);
 
         $links['next'] = [
             'href' => $hrefNext,

@@ -427,4 +427,64 @@ class ProductControllerTest extends TestCase
         $results = json_decode($res->getContent());
         $this->assertEquals(0, count($results->entities));
     }
+
+    public function testBrowseByCategoryWithNotExistsCategory()
+    {
+        $res = $this->call('GET', '/categories/0/products');
+        $this->assertEquals(404, $res->getStatusCode());
+    }
+
+    public function testBrowseByCategoryNotFound()
+    {
+        $category = factory(Category::class)->create();
+
+        $res = $this->call('GET', '/categories/' . $category->id . '/products');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(0, count($results->entities));
+
+        $res = $this->call('GET', '/categories/' . $category->alias . '/products');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(0, count($results->entities));
+    }
+
+    public function testBrowseByCategoryWithPagination()
+    {
+        $category = factory(Category::class)->create();
+
+        $products = [];
+        for ($i = 0; $i < 10; ++$i) {
+            $product = factory(Product::class)->create();
+            $product->categories()->sync([$category->id]);
+            $products[] = $product;
+        }
+        $product = factory(Product::class)->create();
+
+        // 5 items first
+        $res = $this->call('GET', '/categories/' . $category->id . '/products?limit=5');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(5, count($results->entities));
+        for ($i = 0; $i < 5; ++$i) {
+            $this->assertEquals($products[9 - $i]->id, $results->entities[$i]->id);
+        }
+
+        // 5 items next
+        $nextLink = $results->links->next->href;
+        $res = $this->call('GET', $nextLink);
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(5, count($results->entities));
+        for ($i = 0; $i < 5; ++$i) {
+            $this->assertEquals($products[4 - $i]->id, $results->entities[$i]->id);
+        }
+
+        // over list
+        $nextLink = $results->links->next->href;
+        $res = $this->call('GET', $nextLink);
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(0, count($results->entities));
+    }
 }

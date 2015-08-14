@@ -6,7 +6,7 @@
  * @param  array  $items
  * @return array
  */
-function helper_links($items = [])
+return function($items = [])
 {
     $hrefSelf = Request::fullUrl();
 
@@ -33,4 +33,4 @@ function helper_links($items = [])
     }
 
     return $links;
-}
+};

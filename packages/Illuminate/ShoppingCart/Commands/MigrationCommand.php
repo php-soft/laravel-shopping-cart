@@ -12,7 +12,7 @@ class MigrationCommand extends Command
      *
      * @var string
      */
-    protected $name = 'shoppingcart:migrate';
+    protected $name = 'ps-shoppingcart:migrate';
 
     /**
      * The console command description.

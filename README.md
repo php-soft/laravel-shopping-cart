@@ -31,7 +31,7 @@ Once this has finished, you will need to add the service provider to the `provid
 Now generate the migration:
 
 ```sh
-$ php artisan shoppingcart:migrate
+$ php artisan ps-shoppingcart:migrate
 ```
 
 It will generate the migration files. You may now run it with the artisan migrate command:

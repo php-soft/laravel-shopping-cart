@@ -10,4 +10,8 @@ $this->set('galleries', $this->each(json_decode($product->galleries), function (
 
     $section->set($item);
 }));
+$this->set('categories', $this->each($product->categories()->get(), function ($section, $category) {
+
+    $section->set($category->id);
+}));
 $this->set('created_at', $product->created_at);

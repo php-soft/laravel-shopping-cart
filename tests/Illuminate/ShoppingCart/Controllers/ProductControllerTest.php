@@ -164,6 +164,29 @@ class ProductControllerTest extends TestCase
         $this->assertEquals($product->image, $results->entities[0]->image);
     }
 
+    public function testReadFoundWithCategory()
+    {
+        $category1 = factory(Category::class)->create();
+        $category2 = factory(Category::class)->create();
+        $product = factory(Product::class)->create();
+        $product->categories()->sync([ $category1->id, $category2->id ]);
+
+        $res = $this->call('GET', '/products/' . $product->id);
+
+        $this->assertEquals(200, $res->getStatusCode());
+
+        $results = json_decode($res->getContent());
+        $this->assertObjectHasAttribute('entities', $results);
+        $this->assertInternalType('array', $results->entities);
+        $this->assertEquals($product->title, $results->entities[0]->title);
+        $this->assertEquals($product->alias, $results->entities[0]->alias);
+        $this->assertEquals($product->description, $results->entities[0]->description);
+        $this->assertEquals($product->image, $results->entities[0]->image);
+
+        $this->assertEquals($category1->id, $results->entities[0]->categories[0]);
+        $this->assertEquals($category2->id, $results->entities[0]->categories[1]);
+    }
+
     public function testReadWithAlias()
     {
         $product = factory(Product::class)->create();

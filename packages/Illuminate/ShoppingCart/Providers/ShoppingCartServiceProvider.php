@@ -23,19 +23,7 @@ class ShoppingCartServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->registerViewPath();
         $this->registerCommands();
-    }
-
-    /**
-     * Register View Path
-     * 
-     * @return void
-     */
-    private function registerViewPath()
-    {
-        $app = app();
-        $app['view']->addLocation(__DIR__.'/../resources/views');
     }
 
     /**

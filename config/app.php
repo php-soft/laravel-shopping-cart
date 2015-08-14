@@ -144,6 +144,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        PhpSoft\Illuminate\ArrayView\Providers\ArrayViewServiceProvider::class,
         PhpSoft\Illuminate\ShoppingCart\Providers\ShoppingCartServiceProvider::class,
 
     ],
@@ -193,6 +194,8 @@ return [
         'URL'       => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
+
+        'ArrayView' => PhpSoft\Illuminate\ArrayView\Facades\ArrayView::class,
 
     ],
 

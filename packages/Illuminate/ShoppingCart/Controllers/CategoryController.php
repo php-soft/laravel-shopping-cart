@@ -73,7 +73,7 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        $category = Category::find($id);
+        $category = Category::findByIdOrAlias($id);
 
         if (empty($category)) {
             return response()->json(null, 404);

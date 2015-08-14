@@ -21,6 +21,7 @@ Once this has finished, you will need to add the service provider to the `provid
 ```php
 'providers' => [
     // ...
+    PhpSoft\Illuminate\ArrayView\Providers\ArrayViewServiceProvider::class,
     PhpSoft\Illuminate\ShoppingCart\Providers\ShoppingCartServiceProvider::class,
 ]
 ```

@@ -62,6 +62,7 @@ class ProductController extends Controller
             'price' => 'numeric',
             'galleries' => 'array',
             'categories' => 'array',
+            'attributes' => 'array',
         ]);
 
         if ($validator->fails()) {
@@ -126,6 +127,7 @@ class ProductController extends Controller
             'price' => 'numeric',
             'galleries' => 'array',
             'categories' => 'array',
+            'attributes' => 'array',
         ]);
         if ($validator->fails()) {
             return response()->json(arrayView('errors/validation', [

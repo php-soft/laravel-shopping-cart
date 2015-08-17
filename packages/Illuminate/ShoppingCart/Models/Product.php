@@ -22,7 +22,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $fillable = [ 'title', 'alias', 'image', 'description', 'price', 'galleries'];
+    protected $fillable = [ 'title', 'alias', 'image', 'description', 'price', 'galleries', 'attributes'];
 
     /**
      * Get the categories for the product.
@@ -50,6 +50,11 @@ class Product extends Model
         }
         $attributes['galleries'] = json_encode($attributes['galleries']);
 
+        if (empty($attributes['attributes'])) {
+            $attributes['attributes'] = [];
+        }
+        $attributes['attributes'] = json_encode($attributes['attributes']);
+
         return parent::create($attributes)->fresh();
     }
 
@@ -74,6 +79,11 @@ class Product extends Model
             $attributes['galleries'] = [];
         }
         $attributes['galleries'] = json_encode($attributes['galleries']);
+
+        if (empty($attributes['attributes'])) {
+            $attributes['attributes'] = [];
+        }
+        $attributes['attributes'] = json_encode($attributes['attributes']);
 
         if (!parent::update($attributes)) {
             throw new Exception('Cannot update product.');

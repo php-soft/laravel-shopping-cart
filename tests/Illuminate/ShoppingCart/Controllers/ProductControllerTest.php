@@ -27,6 +27,7 @@ class ProductControllerTest extends TestCase
             'price' => 'invalid',
             'galleries' => 'invalid',
             'categories' => 'invalid',
+            'attributes' => 'invalid',
         ]);
 
         $this->assertEquals(400, $res->getStatusCode());
@@ -43,6 +44,7 @@ class ProductControllerTest extends TestCase
         $this->assertInternalType('array', $results->errors->galleries);
         $this->assertEquals('The galleries must be an array.', $results->errors->galleries[0]);
         $this->assertEquals('The categories must be an array.', $results->errors->categories[0]);
+        $this->assertEquals('The attributes must be an array.', $results->errors->attributes[0]);
     }
 
     public function testCreateSuccess()
@@ -63,6 +65,7 @@ class ProductControllerTest extends TestCase
         $this->assertEquals(null, $results->entities[0]->description);
         $this->assertEquals(null, $results->entities[0]->image);
         $this->assertEquals([], $results->entities[0]->galleries);
+        $this->assertEquals([], $results->entities[0]->attributes);
     }
 
     public function testCreateExistsAlias()
@@ -136,6 +139,31 @@ class ProductControllerTest extends TestCase
 
         $product = Product::find($productId);
         $this->assertEquals(2, count($product->categories));
+    }
+
+    public function testCreateWithAttributes()
+    {
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
+        $attributes = [
+            [ 'name' => 'model', 'value' => 'MD01' ],
+            [ 'name' => 'ship_fee', 'value' => 'Free' ],
+        ];
+        $res = $this->call('POST', '/products', [
+            'title' => 'Example Product',
+            'attributes' => $attributes,
+        ]);
+
+        $this->assertEquals(201, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+
+        $product = $results->entities[0];
+        $this->assertEquals(2, count($product->attributes));
+        $this->assertEquals('model', $product->attributes[0]->name);
+        $this->assertEquals('MD01', $product->attributes[0]->value);
+        $this->assertEquals('ship_fee', $product->attributes[1]->name);
+        $this->assertEquals('Free', $product->attributes[1]->value);
     }
 
     public function testReadNotFound()
@@ -237,6 +265,7 @@ class ProductControllerTest extends TestCase
             'price' => 'invalid',
             'galleries' => 'invalid',
             'categories' => 'invalid',
+            'attributes' => 'invalid',
         ]);
         $this->assertEquals(400, $res->getStatusCode());
         $results = json_decode($res->getContent());
@@ -244,6 +273,7 @@ class ProductControllerTest extends TestCase
         $this->assertEquals('The price must be a number.', $results->errors->price[0]);
         $this->assertEquals('The galleries must be an array.', $results->errors->galleries[0]);
         $this->assertEquals('The categories must be an array.', $results->errors->categories[0]);
+        $this->assertEquals('The attributes must be an array.', $results->errors->attributes[0]);
     }
 
     public function testUpdateNothingChange()
@@ -356,6 +386,33 @@ class ProductControllerTest extends TestCase
         // after update: have two categories
         $product = Product::find($product->id);
         $this->assertEquals(2, count($product->categories));
+    }
+
+    public function testUpdateWithAttributes()
+    {
+        $product = factory(Product::class)->create();
+
+        $user = factory(App\User::class)->make([ 'hasRole' => true ]);
+        Auth::login($user);
+
+        $attributes = [
+            [ 'name' => 'model', 'value' => 'MD01' ],
+            [ 'name' => 'ship_fee', 'value' => 'Free' ],
+        ];
+        $res = $this->call('PUT', '/products/' . $product->id, [
+            'title' => 'New Title',
+            'attributes' => $attributes,
+        ]);
+
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+
+        $product = $results->entities[0];
+        $this->assertEquals(2, count($product->attributes));
+        $this->assertEquals('model', $product->attributes[0]->name);
+        $this->assertEquals('MD01', $product->attributes[0]->value);
+        $this->assertEquals('ship_fee', $product->attributes[1]->name);
+        $this->assertEquals('Free', $product->attributes[1]->value);
     }
 
     public function testDeleteNotAuthAndPermission()

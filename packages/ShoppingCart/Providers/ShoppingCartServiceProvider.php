@@ -12,6 +12,14 @@ class ShoppingCartServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Set views path
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'phpsoft.shoppingcart');
+
+        // Publish views
+        $this->publishes([
+            __DIR__ . '/../resources/views' => base_path('resources/views/vendor/phpsoft.shoppingcart'),
+        ]);
+
         // Register commands
         $this->commands('phpsoft.shoppingcart.command.migration');
     }

@@ -41,7 +41,7 @@ class ProductController extends Controller
             $products = Product::browse($options);
         }
 
-        return response()->json(arrayView('product/browse', [
+        return response()->json(arrayView('phpsoft.shoppingcart::product/browse', [
             'products' => $products,
         ]), 200);
     }
@@ -66,7 +66,7 @@ class ProductController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(arrayView('errors/validation', [
+            return response()->json(arrayView('phpsoft.shoppingcart::errors/validation', [
                 'errors' => $validator->errors()
             ]), 400);
         }
@@ -78,7 +78,7 @@ class ProductController extends Controller
             $product->categories()->sync($request->categories);
         }
 
-        return response()->json(arrayView('product/read', [
+        return response()->json(arrayView('phpsoft.shoppingcart::product/read', [
             'product' => $product
         ]), 201);
     }
@@ -97,7 +97,7 @@ class ProductController extends Controller
             return response()->json(null, 404);
         }
 
-        return response()->json(arrayView('product/read', [
+        return response()->json(arrayView('phpsoft.shoppingcart::product/read', [
             'product' => $product
         ]), 200);
     }
@@ -130,7 +130,7 @@ class ProductController extends Controller
             'attributes' => 'array',
         ]);
         if ($validator->fails()) {
-            return response()->json(arrayView('errors/validation', [
+            return response()->json(arrayView('phpsoft.shoppingcart::errors/validation', [
                 'errors' => $validator->errors()
             ]), 400);
         }
@@ -144,7 +144,7 @@ class ProductController extends Controller
         }
 
         // respond
-        return response()->json(arrayView('product/read', [
+        return response()->json(arrayView('phpsoft.shoppingcart::product/read', [
             'product' => $product
         ]), 200);
     }

@@ -6,7 +6,7 @@ $this->set('meta', '{}');
 
 $this->set('entities', $this->each([ $category ], function ($section, $category) {
 
-    $section->set($section->partial('partials/category', [ 'category' => $category ]));
+    $section->set($section->partial('phpsoft.shoppingcart::partials/category', [ 'category' => $category ]));
 }));
 
 $this->set('linked', '{}');

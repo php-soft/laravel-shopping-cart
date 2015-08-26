@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSoft\Illuminate\ShoppingCart\Commands;
+namespace PhpSoft\ShoppingCart\Commands;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;

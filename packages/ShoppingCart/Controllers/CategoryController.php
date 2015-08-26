@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSoft\Illuminate\ShoppingCart\Controllers;
+namespace PhpSoft\ShoppingCart\Controllers;
 
 use Input;
 use Validator;
@@ -8,8 +8,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
-use PhpSoft\Illuminate\ShoppingCart\Models\Category;
-use PhpSoft\Illuminate\ShoppingCart\Controllers\Controller;
+use PhpSoft\ShoppingCart\Models\Category;
+use PhpSoft\ShoppingCart\Controllers\Controller;
 
 /**
  * Category REST
@@ -29,7 +29,7 @@ class CategoryController extends Controller
             'cursor'    => Input::get('cursor'),
         ]);
 
-        return response()->json(arrayView('category/browse', [
+        return response()->json(arrayView('phpsoft.shoppingcart::category/browse', [
             'categories' => $categories,
         ]), 200);
     }
@@ -53,14 +53,14 @@ class CategoryController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(arrayView('errors/validation', [
+            return response()->json(arrayView('phpsoft.shoppingcart::errors/validation', [
                 'errors' => $validator->errors()
             ]), 400);
         }
 
         $category = Category::create($request->all());
 
-        return response()->json(arrayView('category/read', [
+        return response()->json(arrayView('phpsoft.shoppingcart::category/read', [
             'category' => $category
         ]), 201);
     }
@@ -79,7 +79,7 @@ class CategoryController extends Controller
             return response()->json(null, 404);
         }
 
-        return response()->json(arrayView('category/read', [
+        return response()->json(arrayView('phpsoft.shoppingcart::category/read', [
             'category' => $category
         ]), 200);
     }
@@ -111,7 +111,7 @@ class CategoryController extends Controller
             'status' => 'numeric',
         ]);
         if ($validator->fails()) {
-            return response()->json(arrayView('errors/validation', [
+            return response()->json(arrayView('phpsoft.shoppingcart::errors/validation', [
                 'errors' => $validator->errors()
             ]), 400);
         }
@@ -120,7 +120,7 @@ class CategoryController extends Controller
         $category = $category->update($request->all());
 
         // respond
-        return response()->json(arrayView('category/read', [
+        return response()->json(arrayView('phpsoft.shoppingcart::category/read', [
             'category' => $category
         ]), 200);
     }

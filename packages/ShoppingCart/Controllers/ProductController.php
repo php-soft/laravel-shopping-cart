@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSoft\Illuminate\ShoppingCart\Controllers;
+namespace PhpSoft\ShoppingCart\Controllers;
 
 use Input;
 use Validator;
@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
-use PhpSoft\Illuminate\ShoppingCart\Models\Product;
-use PhpSoft\Illuminate\ShoppingCart\Models\Category;
-use PhpSoft\Illuminate\ShoppingCart\Controllers\Controller;
+use PhpSoft\ShoppingCart\Models\Product;
+use PhpSoft\ShoppingCart\Models\Category;
+use PhpSoft\ShoppingCart\Controllers\Controller;
 
 /**
  * Product REST
@@ -41,7 +41,7 @@ class ProductController extends Controller
             $products = Product::browse($options);
         }
 
-        return response()->json(arrayView('product/browse', [
+        return response()->json(arrayView('phpsoft.shoppingcart::product/browse', [
             'products' => $products,
         ]), 200);
     }
@@ -66,7 +66,7 @@ class ProductController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(arrayView('errors/validation', [
+            return response()->json(arrayView('phpsoft.shoppingcart::errors/validation', [
                 'errors' => $validator->errors()
             ]), 400);
         }
@@ -78,7 +78,7 @@ class ProductController extends Controller
             $product->categories()->sync($request->categories);
         }
 
-        return response()->json(arrayView('product/read', [
+        return response()->json(arrayView('phpsoft.shoppingcart::product/read', [
             'product' => $product
         ]), 201);
     }
@@ -97,7 +97,7 @@ class ProductController extends Controller
             return response()->json(null, 404);
         }
 
-        return response()->json(arrayView('product/read', [
+        return response()->json(arrayView('phpsoft.shoppingcart::product/read', [
             'product' => $product
         ]), 200);
     }
@@ -130,7 +130,7 @@ class ProductController extends Controller
             'attributes' => 'array',
         ]);
         if ($validator->fails()) {
-            return response()->json(arrayView('errors/validation', [
+            return response()->json(arrayView('phpsoft.shoppingcart::errors/validation', [
                 'errors' => $validator->errors()
             ]), 400);
         }
@@ -144,7 +144,7 @@ class ProductController extends Controller
         }
 
         // respond
-        return response()->json(arrayView('product/read', [
+        return response()->json(arrayView('phpsoft.shoppingcart::product/read', [
             'product' => $product
         ]), 200);
     }

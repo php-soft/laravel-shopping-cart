@@ -1,6 +1,6 @@
 <?php
 
-use PhpSoft\Illuminate\ShoppingCart\Models\Category;
+use PhpSoft\ShoppingCart\Models\Category;
 
 class CategoryControllerTest extends TestCase
 {

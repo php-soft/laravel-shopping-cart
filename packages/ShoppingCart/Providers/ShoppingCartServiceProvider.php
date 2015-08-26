@@ -1,9 +1,9 @@
 <?php
 
-namespace PhpSoft\Illuminate\ShoppingCart\Providers;
+namespace PhpSoft\ShoppingCart\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use PhpSoft\Illuminate\ShoppingCart\Commands\MigrationCommand;
+use PhpSoft\ShoppingCart\Commands\MigrationCommand;
 
 class ShoppingCartServiceProvider extends ServiceProvider
 {
@@ -12,6 +12,14 @@ class ShoppingCartServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Set views path
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'phpsoft.shoppingcart');
+
+        // Publish views
+        $this->publishes([
+            __DIR__ . '/../resources/views' => base_path('resources/views/vendor/phpsoft.shoppingcart'),
+        ]);
+
         // Register commands
         $this->commands('phpsoft.shoppingcart.command.migration');
     }

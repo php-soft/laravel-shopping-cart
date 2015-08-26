@@ -145,7 +145,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         PhpSoft\Illuminate\ArrayView\Providers\ArrayViewServiceProvider::class,
-        PhpSoft\Illuminate\ShoppingCart\Providers\ShoppingCartServiceProvider::class,
+        PhpSoft\ShoppingCart\Providers\ShoppingCartServiceProvider::class,
 
     ],
 

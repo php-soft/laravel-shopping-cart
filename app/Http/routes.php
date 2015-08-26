@@ -16,39 +16,39 @@ Route::get('/', function () {
 });
 
 // categories resource
-Route::get('categories', '\PhpSoft\Illuminate\ShoppingCart\Controllers\CategoryController@index');
-Route::get('categories/{id}', '\PhpSoft\Illuminate\ShoppingCart\Controllers\CategoryController@show');
+Route::get('categories', '\PhpSoft\ShoppingCart\Controllers\CategoryController@index');
+Route::get('categories/{id}', '\PhpSoft\ShoppingCart\Controllers\CategoryController@show');
 Route::group(['middleware'=>'auth'], function() { // use middleware jwt.auth if use JSON Web Token
     Route::post('categories', [
         'middleware' => 'permission:create-category',
-        'uses' => '\PhpSoft\Illuminate\ShoppingCart\Controllers\CategoryController@store'
+        'uses' => '\PhpSoft\ShoppingCart\Controllers\CategoryController@store'
     ]);
     Route::put('categories/{id}', [
         'middleware' => 'permission:update-category',
-        'uses' => '\PhpSoft\Illuminate\ShoppingCart\Controllers\CategoryController@update'
+        'uses' => '\PhpSoft\ShoppingCart\Controllers\CategoryController@update'
     ]);
     Route::delete('categories/{id}', [
         'middleware' => 'permission:delete-category',
-        'uses' => '\PhpSoft\Illuminate\ShoppingCart\Controllers\CategoryController@destroy'
+        'uses' => '\PhpSoft\ShoppingCart\Controllers\CategoryController@destroy'
     ]);
 });
 
-Route::get('categories/{id}/products', '\PhpSoft\Illuminate\ShoppingCart\Controllers\ProductController@index');
+Route::get('categories/{id}/products', '\PhpSoft\ShoppingCart\Controllers\ProductController@index');
 
 // products resource
-Route::get('products', '\PhpSoft\Illuminate\ShoppingCart\Controllers\ProductController@index');
-Route::get('products/{id}', '\PhpSoft\Illuminate\ShoppingCart\Controllers\ProductController@show');
+Route::get('products', '\PhpSoft\ShoppingCart\Controllers\ProductController@index');
+Route::get('products/{id}', '\PhpSoft\ShoppingCart\Controllers\ProductController@show');
 Route::group(['middleware'=>'auth'], function() { // use middleware jwt.auth if use JSON Web Token
     Route::post('products', [
         'middleware' => 'permission:create-product',
-        'uses' => '\PhpSoft\Illuminate\ShoppingCart\Controllers\ProductController@store'
+        'uses' => '\PhpSoft\ShoppingCart\Controllers\ProductController@store'
     ]);
     Route::put('products/{id}', [
         'middleware' => 'permission:update-product',
-        'uses' => '\PhpSoft\Illuminate\ShoppingCart\Controllers\ProductController@update'
+        'uses' => '\PhpSoft\ShoppingCart\Controllers\ProductController@update'
     ]);
     Route::delete('products/{id}', [
         'middleware' => 'permission:delete-product',
-        'uses' => '\PhpSoft\Illuminate\ShoppingCart\Controllers\ProductController@destroy'
+        'uses' => '\PhpSoft\ShoppingCart\Controllers\ProductController@destroy'
     ]);
 });

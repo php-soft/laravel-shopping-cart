@@ -20,7 +20,7 @@ $factory->define(App\User::class, function ($faker) {
     ];
 });
 
-$factory->define(PhpSoft\Illuminate\ShoppingCart\Models\Product::class, function ($faker) {
+$factory->define(PhpSoft\ShoppingCart\Models\Product::class, function ($faker) {
     return [
         'title' => $faker->name,
         'alias' => $faker->slug,
@@ -31,7 +31,7 @@ $factory->define(PhpSoft\Illuminate\ShoppingCart\Models\Product::class, function
     ];
 });
 
-$factory->define(PhpSoft\Illuminate\ShoppingCart\Models\Category::class, function ($faker) {
+$factory->define(PhpSoft\ShoppingCart\Models\Category::class, function ($faker) {
     return [
         'name' => $faker->name,
         'alias' => $faker->slug,

@@ -1,9 +1,9 @@
 <?php
 
-namespace PhpSoft\Illuminate\ShoppingCart\Providers;
+namespace PhpSoft\ShoppingCart\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use PhpSoft\Illuminate\ShoppingCart\Commands\MigrationCommand;
+use PhpSoft\ShoppingCart\Commands\MigrationCommand;
 
 class ShoppingCartServiceProvider extends ServiceProvider
 {

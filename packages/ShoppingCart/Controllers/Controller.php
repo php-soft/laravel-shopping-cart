@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSoft\Illuminate\ShoppingCart\Controllers;
+namespace PhpSoft\ShoppingCart\Controllers;
 
 use Auth;
 use PhpSoft\Illuminate\ArrayView\Facades\ArrayView;

@@ -1,7 +1,7 @@
 <?php
 
-use PhpSoft\Illuminate\ShoppingCart\Models\Product;
-use PhpSoft\Illuminate\ShoppingCart\Models\Category;
+use PhpSoft\ShoppingCart\Models\Product;
+use PhpSoft\ShoppingCart\Models\Category;
 
 class ProductControllerTest extends TestCase
 {

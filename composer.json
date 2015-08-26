@@ -28,10 +28,10 @@
     },
     "autoload": {
         "classmap": [
-            "packages/Illuminate/ShoppingCart/database"
+            "packages/ShoppingCart/database"
         ],
         "psr-4": {
-            "PhpSoft\\Illuminate\\ShoppingCart\\": "packages/Illuminate/ShoppingCart"
+            "PhpSoft\\ShoppingCart\\": "packages/ShoppingCart"
         }
     },
     "autoload-dev": {

@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSoft\Illuminate\ShoppingCart\Controllers;
+namespace PhpSoft\ShoppingCart\Controllers;
 
 use Input;
 use Validator;
@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
-use PhpSoft\Illuminate\ShoppingCart\Models\Product;
-use PhpSoft\Illuminate\ShoppingCart\Models\Category;
-use PhpSoft\Illuminate\ShoppingCart\Controllers\Controller;
+use PhpSoft\ShoppingCart\Models\Product;
+use PhpSoft\ShoppingCart\Models\Category;
+use PhpSoft\ShoppingCart\Controllers\Controller;
 
 /**
  * Product REST

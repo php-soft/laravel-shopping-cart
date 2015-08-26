@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSoft\Illuminate\ShoppingCart\Models;
+namespace PhpSoft\ShoppingCart\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Exception;
@@ -32,14 +32,14 @@ class Category extends Model
      */
     public function products()
     {
-        return $this->belongsToMany('PhpSoft\Illuminate\ShoppingCart\Models\Product', 'shop_category_product');
+        return $this->belongsToMany('PhpSoft\ShoppingCart\Models\Product', 'shop_category_product');
     }
 
     /**
      * Create Category
      * 
      * @param  array  $attributes        Attributes
-     * @return PhpSoft\Illuminate\ShoppingCart\Model\Product
+     * @return PhpSoft\ShoppingCart\Model\Product
      */
     public static function create(array $attributes = [])
     {

@@ -22,7 +22,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $fillable = [ 'title', 'alias', 'image', 'description', 'price', 'galleries', 'attributes'];
+    protected $fillable = [ 'title', 'alias', 'image', 'description', 'price', 'galleries', 'attributes' ];
 
     /**
      * Get the categories for the product.
@@ -100,14 +100,26 @@ class Product extends Model
      */
     public static function browse($options = [])
     {
-        if (empty($options)) {
-            return parent::all();
+        $find = new Product();
+        $fillable = $find->fillable;
+
+        if (!empty($options['filters'])) {
+            $inFilters = array_intersect($fillable, array_keys($options['filters']));
+            foreach ($inFilters as $key) {
+                $find = $find->where($key, 'LIKE', $options['filters'][$key]);
+            }
         }
+
+        $total = $find->count();
 
         if (!empty($options['order'])) {
             foreach ($options['order'] as $field => $direction) {
-                $find = parent::orderBy($field, $direction);
+                $find = $find->orderBy($field, $direction);
             }
+        }
+
+        if (!empty($options['offset'])) {
+            $find = $find->skip($options['offset']);
         }
 
         if (!empty($options['limit'])) {
@@ -118,7 +130,12 @@ class Product extends Model
             $find = $find->where('id', '<', $options['cursor']);
         }
 
-        return $find->get();
+        return [
+            'total'  => $total,
+            'offset' => empty($options['offset']) ? 0 : $options['offset'],
+            'limit'  => empty($options['limit']) ? 0 : $options['limit'],
+            'data'   => $find->get(),
+        ];
     }
 
     /**
@@ -130,12 +147,27 @@ class Product extends Model
      */
     public static function browseByCategory($category, $options = [])
     {
+        $model = new Product();
         $find = $category->products();
+        $fillable = $model->fillable;
+
+        if (!empty($options['filters'])) {
+            $inFilters = array_intersect($fillable, array_keys($options['filters']));
+            foreach ($inFilters as $key) {
+                $find = $find->where("shop_products.{$key}", 'LIKE', $options['filters'][$key]);
+            }
+        }
+
+        $total = $find->count();
 
         if (!empty($options['order'])) {
             foreach ($options['order'] as $field => $direction) {
                 $find = $find->orderBy($field, $direction);
             }
+        }
+
+        if (!empty($options['offset'])) {
+            $find = $find->skip($options['offset']);
         }
 
         if (!empty($options['limit'])) {
@@ -146,7 +178,12 @@ class Product extends Model
             $find = $find->where('shop_products.id', '<', $options['cursor']);
         }
 
-        return $find->get();
+        return [
+            'total'  => $total,
+            'offset' => empty($options['offset']) ? 0 : $options['offset'],
+            'limit'  => empty($options['limit']) ? 0 : $options['limit'],
+            'data'   => $find->get(),
+        ];
     }
 
     /**

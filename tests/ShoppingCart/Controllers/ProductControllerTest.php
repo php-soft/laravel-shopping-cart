@@ -567,4 +567,65 @@ class ProductControllerTest extends TestCase
         $results = json_decode($res->getContent());
         $this->assertEquals(0, count($results->entities));
     }
+
+    public function testBrowseWithFilter()
+    {
+        $products = [];
+        for ($i = 0; $i < 10; ++$i) {
+            $products[] = factory(Product::class)->create([
+                'title' => 'Test' . $i,
+            ]);
+        }
+
+        $res = $this->call('GET', '/products');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, $results->meta->total);
+        $this->assertEquals(10, count($results->entities));
+
+        $res = $this->call('GET', '/products?title=Test0');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(1, $results->meta->total);
+        $this->assertEquals(1, count($results->entities));
+
+        $res = $this->call('GET', '/products?title=Test%');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, $results->meta->total);
+        $this->assertEquals(10, count($results->entities));
+    }
+
+    public function testBrowseWithCategoryAndFilter()
+    {
+        $category = factory(Category::class)->create();
+
+        $products = [];
+        for ($i = 0; $i < 10; ++$i) {
+            $product = factory(Product::class)->create([
+                'title' => 'Test' . $i,
+            ]);
+            $product->categories()->sync([$category->id]);
+            $products[] = $product;
+        }
+        $product = factory(Product::class)->create();
+
+        $res = $this->call('GET', '/categories/' . $category->id . '/products');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, $results->meta->total);
+        $this->assertEquals(10, count($results->entities));
+
+        $res = $this->call('GET', '/categories/' . $category->id . '/products?title=Test0');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(1, $results->meta->total);
+        $this->assertEquals(1, count($results->entities));
+
+        $res = $this->call('GET', '/categories/' . $category->id . '/products?title=Test%');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, $results->meta->total);
+        $this->assertEquals(10, count($results->entities));
+    }
 }

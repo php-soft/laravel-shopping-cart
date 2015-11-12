@@ -22,12 +22,13 @@ class ProductController extends Controller
      *
      * @return Response
      */
-    public function index($categoryId = null)
+    public function index(Request $request, $categoryId = null)
     {
         $options = [
             'order'     => [ 'shop_products.id' => 'desc' ],
-            'limit'     => (int)Input::get('limit') ? (int)Input::get('limit') : 25,
+            'limit'     => (int)Input::get('limit', 25),
             'cursor'    => Input::get('cursor'),
+            'filters'   => $request->all(),
         ];
 
         if ($categoryId != null) {
@@ -55,14 +56,14 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'alias' => 'regex:/^[a-z0-9\-]+/|unique:shop_products',
-            'image' => 'string',
-            'description' => 'string',
-            'price' => 'numeric',
-            'galleries' => 'array',
-            'categories' => 'array',
-            'attributes' => 'array',
+            'title'         => 'required',
+            'alias'         => 'regex:/^[a-z0-9\-]+/|unique:shop_products',
+            'image'         => 'string',
+            'description'   => 'string',
+            'price'         => 'numeric',
+            'galleries'     => 'array',
+            'categories'    => 'array',
+            'attributes'    => 'array',
         ]);
 
         if ($validator->fails()) {
@@ -120,14 +121,14 @@ class ProductController extends Controller
 
         // validate
         $validator = Validator::make($request->all(), [
-            'title' => 'string',
-            'alias' => 'regex:/^[a-z0-9\-]+/|unique:shop_products,alias,' . $product->id,
-            'image' => 'string',
-            'description' => 'string',
-            'price' => 'numeric',
-            'galleries' => 'array',
-            'categories' => 'array',
-            'attributes' => 'array',
+            'title'         => 'string',
+            'alias'         => 'regex:/^[a-z0-9\-]+/|unique:shop_products,alias,' . $product->id,
+            'image'         => 'string',
+            'description'   => 'string',
+            'price'         => 'numeric',
+            'galleries'     => 'array',
+            'categories'    => 'array',
+            'attributes'    => 'array',
         ]);
         if ($validator->fails()) {
             return response()->json(arrayView('phpsoft.shoppingcart::errors/validation', [

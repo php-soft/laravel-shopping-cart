@@ -417,6 +417,40 @@ class CategoryControllerTest extends TestCase
         $this->assertEquals(0, count($results->entities));
     }
 
+    public function testBrowseWithSort()
+    {
+        $categories = [];
+        for ($i = 0; $i < 10; ++$i) {
+            $categories[] = factory(Category::class)->create([
+                'name' => 9 - $i,
+            ]);
+        }
+
+        $res = $this->call('GET', '/categories');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, count($results->entities));
+        for ($i = 0; $i < 10; ++$i) {
+            $this->assertEquals($categories[9 - $i]->id, $results->entities[$i]->id);
+        }
+
+        $res = $this->call('GET', '/categories?sort=name');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, count($results->entities));
+        for ($i = 0; $i < 10; ++$i) {
+            $this->assertEquals($categories[$i]->id, $results->entities[$i]->id);
+        }
+
+        $res = $this->call('GET', '/categories?sort=name&direction=asc');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, count($results->entities));
+        for ($i = 0; $i < 10; ++$i) {
+            $this->assertEquals($categories[9 - $i]->id, $results->entities[$i]->id);
+        }
+    }
+
     public function testBrowseWithFilter()
     {
         $categories = [];

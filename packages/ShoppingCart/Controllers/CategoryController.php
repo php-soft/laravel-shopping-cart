@@ -24,7 +24,7 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $categories = Category::browse([
-            'order'     => [ 'id' => 'desc' ],
+            'order'     => [ Input::get('sort', 'id') => Input::get('direction', 'desc') ],
             'limit'     => (int)Input::get('limit', 25),
             'cursor'    => Input::get('cursor'),
             'filters'   => $request->all(),

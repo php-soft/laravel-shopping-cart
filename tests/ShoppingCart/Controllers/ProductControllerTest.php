@@ -474,7 +474,7 @@ class ProductControllerTest extends TestCase
         }
     }
 
-    public function testBrowseWithPagination()
+    public function testBrowseWithScroll()
     {
         $products = [];
         for ($i = 0; $i < 10; ++$i) {
@@ -503,6 +503,38 @@ class ProductControllerTest extends TestCase
         // over list
         $nextLink = $results->links->next->href;
         $res = $this->call('GET', $nextLink);
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(0, count($results->entities));
+    }
+
+    public function testBrowseWithScroll()
+    {
+        $products = [];
+        for ($i = 0; $i < 10; ++$i) {
+            $products[] = factory(Product::class)->create();
+        }
+
+        // 5 items first
+        $res = $this->call('GET', '/products?limit=5');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(5, count($results->entities));
+        for ($i = 0; $i < 5; ++$i) {
+            $this->assertEquals($products[9 - $i]->id, $results->entities[$i]->id);
+        }
+
+        // 5 items next
+        $res = $this->call('GET', '/products?limit=5&page=2');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(5, count($results->entities));
+        for ($i = 0; $i < 5; ++$i) {
+            $this->assertEquals($products[4 - $i]->id, $results->entities[$i]->id);
+        }
+
+        // over list
+        $res = $this->call('GET', '/products?limit=5&page=2');
         $this->assertEquals(200, $res->getStatusCode());
         $results = json_decode($res->getContent());
         $this->assertEquals(0, count($results->entities));

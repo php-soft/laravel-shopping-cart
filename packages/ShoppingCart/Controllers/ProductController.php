@@ -26,7 +26,8 @@ class ProductController extends Controller
     {
         $options = [
             'order'     => [ Input::get('sort', 'shop_products.id') => Input::get('direction', 'desc') ],
-            'limit'     => (int)Input::get('limit', 25),
+            'limit'     => ($limit = (int)Input::get('limit', 25)),
+            'offset'    => (Input::get('page', 1) - 1) * $limit,
             'cursor'    => Input::get('cursor'),
             'filters'   => $request->all(),
         ];

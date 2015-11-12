@@ -416,4 +416,32 @@ class CategoryControllerTest extends TestCase
         $results = json_decode($res->getContent());
         $this->assertEquals(0, count($results->entities));
     }
+
+    public function testBrowseWithFilter()
+    {
+        $categories = [];
+        for ($i = 0; $i < 10; ++$i) {
+            $categories[] = factory(Category::class)->create([
+                'name' => 'Test' . $i,
+            ]);
+        }
+
+        $res = $this->call('GET', '/categories');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, $results->meta->total);
+        $this->assertEquals(10, count($results->entities));
+
+        $res = $this->call('GET', '/categories?name=Test0');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(1, $results->meta->total);
+        $this->assertEquals(1, count($results->entities));
+
+        $res = $this->call('GET', '/categories?name=Test%');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, $results->meta->total);
+        $this->assertEquals(10, count($results->entities));
+    }
 }

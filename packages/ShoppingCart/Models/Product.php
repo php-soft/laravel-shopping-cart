@@ -22,7 +22,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $fillable = [ 'title', 'alias', 'image', 'description', 'price', 'galleries', 'attributes' ];
+    protected $fillable = [ 'name', 'alias', 'image', 'description', 'price', 'galleries', 'attributes' ];
 
     /**
      * Get the categories for the product.
@@ -41,7 +41,7 @@ class Product extends Model
     public static function create(array $attributes = [])
     {
         if (empty($attributes['alias'])) {
-            $attributes['alias'] = Str::slug($attributes['title'])
+            $attributes['alias'] = Str::slug($attributes['name'])
                 .'-'.Uuid::generate(4);
         }
 
@@ -67,11 +67,11 @@ class Product extends Model
     public function update(array $attributes = [])
     {
         if (isset($attributes['alias']) && empty($attributes['alias'])) {
-            $title = $this->title;
-            if (isset($attributes['title'])) {
-                $title = $attributes['title'];
+            $name = $this->name;
+            if (isset($attributes['name'])) {
+                $name = $attributes['name'];
             }
-            $attributes['alias'] = Str::slug($title)
+            $attributes['alias'] = Str::slug($name)
                 .'-'.Uuid::generate(4);
         }
 

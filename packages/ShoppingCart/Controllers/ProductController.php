@@ -57,7 +57,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'title'         => 'required',
+            'name'          => 'required',
             'alias'         => 'regex:/^[a-z0-9\-]+/|unique:shop_products',
             'image'         => 'string',
             'description'   => 'string',
@@ -122,7 +122,7 @@ class ProductController extends Controller
 
         // validate
         $validator = Validator::make($request->all(), [
-            'title'         => 'string',
+            'name'          => 'string',
             'alias'         => 'regex:/^[a-z0-9\-]+/|unique:shop_products,alias,' . $product->id,
             'image'         => 'string',
             'description'   => 'string',

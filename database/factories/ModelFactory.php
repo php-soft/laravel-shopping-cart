@@ -22,7 +22,7 @@ $factory->define(App\User::class, function ($faker) {
 
 $factory->define(PhpSoft\ShoppingCart\Models\Product::class, function ($faker) {
     return [
-        'title' => $faker->name,
+        'name' => $faker->name,
         'alias' => $faker->slug,
         'image' => $faker->uuid,
         'description' => $faker->text,

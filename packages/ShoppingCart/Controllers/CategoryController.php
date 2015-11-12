@@ -25,7 +25,8 @@ class CategoryController extends Controller
     {
         $categories = Category::browse([
             'order'     => [ Input::get('sort', 'id') => Input::get('direction', 'desc') ],
-            'limit'     => (int)Input::get('limit', 25),
+            'limit'     => ($limit = (int)Input::get('limit', 25)),
+            'offset'    => (Input::get('page', 1) - 1) * $limit,
             'cursor'    => Input::get('cursor'),
             'filters'   => $request->all(),
         ]);

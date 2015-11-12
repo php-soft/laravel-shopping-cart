@@ -383,7 +383,7 @@ class CategoryControllerTest extends TestCase
         }
     }
 
-    public function testBrowseWithPagination()
+    public function testBrowseWithScroll()
     {
         $categories = [];
         for ($i = 0; $i < 10; ++$i) {
@@ -412,6 +412,38 @@ class CategoryControllerTest extends TestCase
         // over list
         $nextLink = $results->links->next->href;
         $res = $this->call('GET', $nextLink);
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(0, count($results->entities));
+    }
+
+    public function testBrowseWithPagination()
+    {
+        $categories = [];
+        for ($i = 0; $i < 10; ++$i) {
+            $categories[] = factory(Category::class)->create();
+        }
+
+        // 5 items first
+        $res = $this->call('GET', '/categories?limit=5');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(5, count($results->entities));
+        for ($i = 0; $i < 5; ++$i) {
+            $this->assertEquals($categories[9 - $i]->id, $results->entities[$i]->id);
+        }
+
+        // 5 items next
+        $res = $this->call('GET', '/categories?limit=5&page=2');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(5, count($results->entities));
+        for ($i = 0; $i < 5; ++$i) {
+            $this->assertEquals($categories[4 - $i]->id, $results->entities[$i]->id);
+        }
+
+        // over list
+        $res = $this->call('GET', '/categories?limit=5&page=3');
         $this->assertEquals(200, $res->getStatusCode());
         $results = json_decode($res->getContent());
         $this->assertEquals(0, count($results->entities));

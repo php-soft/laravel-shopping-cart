@@ -75,15 +75,19 @@ class Product extends Model
                 .'-'.Uuid::generate(4);
         }
 
-        if (empty($attributes['galleries'])) {
-            $attributes['galleries'] = [];
+        if (isset($attributes['galleries'])) {
+            if (empty($attributes['galleries'])) {
+                $attributes['galleries'] = [];
+            }
+            $attributes['galleries'] = json_encode($attributes['galleries']);
         }
-        $attributes['galleries'] = json_encode($attributes['galleries']);
 
-        if (empty($attributes['attributes'])) {
-            $attributes['attributes'] = [];
+        if (isset($attributes['attributes'])) {
+            if (empty($attributes['attributes'])) {
+                $attributes['attributes'] = [];
+            }
+            $attributes['attributes'] = json_encode($attributes['attributes']);
         }
-        $attributes['attributes'] = json_encode($attributes['attributes']);
 
         if (!parent::update($attributes)) {
             throw new Exception('Cannot update product.');

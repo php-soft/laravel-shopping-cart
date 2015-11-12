@@ -25,7 +25,7 @@ class ProductController extends Controller
     public function index(Request $request, $categoryId = null)
     {
         $options = [
-            'order'     => [ 'shop_products.id' => 'desc' ],
+            'order'     => [ Input::get('sort', 'shop_products.id') => Input::get('direction', 'desc') ],
             'limit'     => (int)Input::get('limit', 25),
             'cursor'    => Input::get('cursor'),
             'filters'   => $request->all(),

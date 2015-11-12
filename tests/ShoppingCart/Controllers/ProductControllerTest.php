@@ -35,8 +35,8 @@ class ProductControllerTest extends TestCase
         $results = json_decode($res->getContent());
         $this->assertEquals('error', $results->status);
         $this->assertEquals('validation', $results->type);
-        $this->assertObjectHasAttribute('title', $results->errors);
-        $this->assertEquals('The title field is required.', $results->errors->title[0]);
+        $this->assertObjectHasAttribute('name', $results->errors);
+        $this->assertEquals('The name field is required.', $results->errors->name[0]);
         $this->assertInternalType('array', $results->errors->alias);
         $this->assertEquals('The alias format is invalid.', $results->errors->alias[0]);
         $this->assertInternalType('array', $results->errors->price);
@@ -53,7 +53,7 @@ class ProductControllerTest extends TestCase
         Auth::login($user);
 
         $res = $this->call('POST', '/products', [
-            'title' => 'Example Product',
+            'name' => 'Example Product',
         ]);
 
         $this->assertEquals(201, $res->getStatusCode());
@@ -61,7 +61,7 @@ class ProductControllerTest extends TestCase
         $results = json_decode($res->getContent());
         $this->assertObjectHasAttribute('entities', $results);
         $this->assertInternalType('array', $results->entities);
-        $this->assertEquals('Example Product', $results->entities[0]->title);
+        $this->assertEquals('Example Product', $results->entities[0]->name);
         $this->assertEquals(null, $results->entities[0]->description);
         $this->assertEquals(null, $results->entities[0]->image);
         $this->assertEquals([], $results->entities[0]->galleries);
@@ -76,7 +76,7 @@ class ProductControllerTest extends TestCase
         $product = factory(Product::class)->create();
 
         $res = $this->call('POST', '/products', [
-            'title' => 'Example Product',
+            'name' => 'Example Product',
             'alias' => $product->alias,
         ]);
 
@@ -101,7 +101,7 @@ class ProductControllerTest extends TestCase
             \Webpatser\Uuid\Uuid::generate(4) . '.jpg',
         ];
         $res = $this->call('POST', '/products', [
-            'title' => 'Example Product',
+            'name' => 'Example Product',
             'galleries' => $galleries,
         ]);
 
@@ -129,7 +129,7 @@ class ProductControllerTest extends TestCase
             $category2->id,
         ];
         $res = $this->call('POST', '/products', [
-            'title' => 'Example Product',
+            'name' => 'Example Product',
             'categories' => $categories,
         ]);
 
@@ -151,7 +151,7 @@ class ProductControllerTest extends TestCase
             [ 'name' => 'ship_fee', 'value' => 'Free' ],
         ];
         $res = $this->call('POST', '/products', [
-            'title' => 'Example Product',
+            'name' => 'Example Product',
             'attributes' => $attributes,
         ]);
 
@@ -186,7 +186,7 @@ class ProductControllerTest extends TestCase
         $results = json_decode($res->getContent());
         $this->assertObjectHasAttribute('entities', $results);
         $this->assertInternalType('array', $results->entities);
-        $this->assertEquals($product->title, $results->entities[0]->title);
+        $this->assertEquals($product->name, $results->entities[0]->name);
         $this->assertEquals($product->alias, $results->entities[0]->alias);
         $this->assertEquals($product->description, $results->entities[0]->description);
         $this->assertEquals($product->image, $results->entities[0]->image);
@@ -206,7 +206,7 @@ class ProductControllerTest extends TestCase
         $results = json_decode($res->getContent());
         $this->assertObjectHasAttribute('entities', $results);
         $this->assertInternalType('array', $results->entities);
-        $this->assertEquals($product->title, $results->entities[0]->title);
+        $this->assertEquals($product->name, $results->entities[0]->name);
         $this->assertEquals($product->alias, $results->entities[0]->alias);
         $this->assertEquals($product->description, $results->entities[0]->description);
         $this->assertEquals($product->image, $results->entities[0]->image);
@@ -226,7 +226,7 @@ class ProductControllerTest extends TestCase
         $results = json_decode($res->getContent());
         $this->assertObjectHasAttribute('entities', $results);
         $this->assertInternalType('array', $results->entities);
-        $this->assertEquals($product->title, $results->entities[0]->title);
+        $this->assertEquals($product->name, $results->entities[0]->name);
         $this->assertEquals($product->alias, $results->entities[0]->alias);
         $this->assertEquals($product->description, $results->entities[0]->description);
         $this->assertEquals($product->image, $results->entities[0]->image);
@@ -286,7 +286,7 @@ class ProductControllerTest extends TestCase
         $res = $this->call('PUT', '/products/' . $product->id);
         $this->assertEquals(200, $res->getStatusCode());
         $results = json_decode($res->getContent());
-        $this->assertEquals($product->title, $results->entities[0]->title);
+        $this->assertEquals($product->name, $results->entities[0]->name);
         $this->assertEquals($product->alias, $results->entities[0]->alias);
         $this->assertEquals($product->description, $results->entities[0]->description);
         $this->assertEquals($product->price, $results->entities[0]->price);
@@ -301,7 +301,7 @@ class ProductControllerTest extends TestCase
         Auth::login($user);
 
         $res = $this->call('PUT', '/products/' . $product->id, [
-            'title' => 'New Title',
+            'name' => 'New name',
             'alias' => 'new-alias',
             'description' => 'New description',
             'price' => 123456,
@@ -309,7 +309,7 @@ class ProductControllerTest extends TestCase
         ]);
         $this->assertEquals(200, $res->getStatusCode());
         $results = json_decode($res->getContent());
-        $this->assertEquals('New Title', $results->entities[0]->title);
+        $this->assertEquals('New name', $results->entities[0]->name);
         $this->assertEquals('new-alias', $results->entities[0]->alias);
         $this->assertEquals('New description', $results->entities[0]->description);
         $this->assertEquals(123456, $results->entities[0]->price);
@@ -317,7 +317,7 @@ class ProductControllerTest extends TestCase
 
         // change keep current alias
         $res = $this->call('PUT', '/products/' . $product->id, [
-            'title' => 'New Title',
+            'name' => 'New name',
             'alias' => 'new-alias',
         ]);
         $this->assertEquals(200, $res->getStatusCode());
@@ -333,7 +333,7 @@ class ProductControllerTest extends TestCase
         Auth::login($user);
 
         $res = $this->call('PUT', '/products/' . $product->id, [
-            'title' => 'New Title',
+            'name' => 'New name',
             'alias' => '',
         ]);
         $this->assertEquals(200, $res->getStatusCode());
@@ -350,7 +350,7 @@ class ProductControllerTest extends TestCase
         Auth::login($user);
 
         $res = $this->call('PUT', '/products/' . $product->id, [
-            'title' => 'New Title',
+            'name' => 'New name',
             'alias' => $otherProduct->alias,
         ]);
         $this->assertEquals(400, $res->getStatusCode());
@@ -376,7 +376,7 @@ class ProductControllerTest extends TestCase
             $category2->id,
         ];
         $res = $this->call('PUT', '/products/' . $product->id, [
-            'title' => 'New Title',
+            'name' => 'New name',
             'categories' => $categories,
         ]);
 
@@ -400,7 +400,7 @@ class ProductControllerTest extends TestCase
             [ 'name' => 'ship_fee', 'value' => 'Free' ],
         ];
         $res = $this->call('PUT', '/products/' . $product->id, [
-            'title' => 'New Title',
+            'name' => 'New name',
             'attributes' => $attributes,
         ]);
 
@@ -474,7 +474,7 @@ class ProductControllerTest extends TestCase
         }
     }
 
-    public function testBrowseWithPagination()
+    public function testBrowseWithScroll()
     {
         $products = [];
         for ($i = 0; $i < 10; ++$i) {
@@ -503,6 +503,38 @@ class ProductControllerTest extends TestCase
         // over list
         $nextLink = $results->links->next->href;
         $res = $this->call('GET', $nextLink);
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(0, count($results->entities));
+    }
+
+    public function testBrowseWithPagination()
+    {
+        $products = [];
+        for ($i = 0; $i < 10; ++$i) {
+            $products[] = factory(Product::class)->create();
+        }
+
+        // 5 items first
+        $res = $this->call('GET', '/products?limit=5');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(5, count($results->entities));
+        for ($i = 0; $i < 5; ++$i) {
+            $this->assertEquals($products[9 - $i]->id, $results->entities[$i]->id);
+        }
+
+        // 5 items next
+        $res = $this->call('GET', '/products?limit=5&page=2');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(5, count($results->entities));
+        for ($i = 0; $i < 5; ++$i) {
+            $this->assertEquals($products[4 - $i]->id, $results->entities[$i]->id);
+        }
+
+        // over list
+        $res = $this->call('GET', '/products?limit=5&page=3');
         $this->assertEquals(200, $res->getStatusCode());
         $results = json_decode($res->getContent());
         $this->assertEquals(0, count($results->entities));
@@ -566,5 +598,100 @@ class ProductControllerTest extends TestCase
         $this->assertEquals(200, $res->getStatusCode());
         $results = json_decode($res->getContent());
         $this->assertEquals(0, count($results->entities));
+    }
+
+    public function testBrowseWithSort()
+    {
+        $products = [];
+        for ($i = 0; $i < 10; ++$i) {
+            $products[] = factory(Product::class)->create([
+                'name' => 9 - $i,
+            ]);
+        }
+
+        $res = $this->call('GET', '/products');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, count($results->entities));
+        for ($i = 0; $i < 10; ++$i) {
+            $this->assertEquals($products[9 - $i]->id, $results->entities[$i]->id);
+        }
+
+        $res = $this->call('GET', '/products?sort=name');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, count($results->entities));
+        for ($i = 0; $i < 10; ++$i) {
+            $this->assertEquals($products[$i]->id, $results->entities[$i]->id);
+        }
+
+        $res = $this->call('GET', '/products?sort=name&direction=asc');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, count($results->entities));
+        for ($i = 0; $i < 10; ++$i) {
+            $this->assertEquals($products[9 - $i]->id, $results->entities[$i]->id);
+        }
+    }
+
+    public function testBrowseWithFilter()
+    {
+        $products = [];
+        for ($i = 0; $i < 10; ++$i) {
+            $products[] = factory(Product::class)->create([
+                'name' => 'Test' . $i,
+            ]);
+        }
+
+        $res = $this->call('GET', '/products');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, $results->meta->total);
+        $this->assertEquals(10, count($results->entities));
+
+        $res = $this->call('GET', '/products?name=Test0');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(1, $results->meta->total);
+        $this->assertEquals(1, count($results->entities));
+
+        $res = $this->call('GET', '/products?name=Test%');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, $results->meta->total);
+        $this->assertEquals(10, count($results->entities));
+    }
+
+    public function testBrowseWithCategoryAndFilter()
+    {
+        $category = factory(Category::class)->create();
+
+        $products = [];
+        for ($i = 0; $i < 10; ++$i) {
+            $product = factory(Product::class)->create([
+                'name' => 'Test' . $i,
+            ]);
+            $product->categories()->sync([$category->id]);
+            $products[] = $product;
+        }
+        $product = factory(Product::class)->create();
+
+        $res = $this->call('GET', '/categories/' . $category->id . '/products');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, $results->meta->total);
+        $this->assertEquals(10, count($results->entities));
+
+        $res = $this->call('GET', '/categories/' . $category->id . '/products?name=Test0');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(1, $results->meta->total);
+        $this->assertEquals(1, count($results->entities));
+
+        $res = $this->call('GET', '/categories/' . $category->id . '/products?name=Test%');
+        $this->assertEquals(200, $res->getStatusCode());
+        $results = json_decode($res->getContent());
+        $this->assertEquals(10, $results->meta->total);
+        $this->assertEquals(10, count($results->entities));
     }
 }

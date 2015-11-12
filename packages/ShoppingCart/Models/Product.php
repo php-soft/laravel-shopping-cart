@@ -22,7 +22,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $fillable = [ 'title', 'alias', 'image', 'description', 'price', 'galleries', 'attributes'];
+    protected $fillable = [ 'name', 'alias', 'image', 'description', 'price', 'galleries', 'attributes' ];
 
     /**
      * Get the categories for the product.
@@ -41,7 +41,7 @@ class Product extends Model
     public static function create(array $attributes = [])
     {
         if (empty($attributes['alias'])) {
-            $attributes['alias'] = Str::slug($attributes['title'])
+            $attributes['alias'] = Str::slug($attributes['name'])
                 .'-'.Uuid::generate(4);
         }
 
@@ -67,23 +67,27 @@ class Product extends Model
     public function update(array $attributes = [])
     {
         if (isset($attributes['alias']) && empty($attributes['alias'])) {
-            $title = $this->title;
-            if (isset($attributes['title'])) {
-                $title = $attributes['title'];
+            $name = $this->name;
+            if (isset($attributes['name'])) {
+                $name = $attributes['name'];
             }
-            $attributes['alias'] = Str::slug($title)
+            $attributes['alias'] = Str::slug($name)
                 .'-'.Uuid::generate(4);
         }
 
-        if (empty($attributes['galleries'])) {
-            $attributes['galleries'] = [];
+        if (isset($attributes['galleries'])) {
+            if (empty($attributes['galleries'])) {
+                $attributes['galleries'] = [];
+            }
+            $attributes['galleries'] = json_encode($attributes['galleries']);
         }
-        $attributes['galleries'] = json_encode($attributes['galleries']);
 
-        if (empty($attributes['attributes'])) {
-            $attributes['attributes'] = [];
+        if (isset($attributes['attributes'])) {
+            if (empty($attributes['attributes'])) {
+                $attributes['attributes'] = [];
+            }
+            $attributes['attributes'] = json_encode($attributes['attributes']);
         }
-        $attributes['attributes'] = json_encode($attributes['attributes']);
 
         if (!parent::update($attributes)) {
             throw new Exception('Cannot update product.');
@@ -100,14 +104,26 @@ class Product extends Model
      */
     public static function browse($options = [])
     {
-        if (empty($options)) {
-            return parent::all();
+        $find = new Product();
+        $fillable = $find->fillable;
+
+        if (!empty($options['filters'])) {
+            $inFilters = array_intersect($fillable, array_keys($options['filters']));
+            foreach ($inFilters as $key) {
+                $find = $find->where($key, 'LIKE', $options['filters'][$key]);
+            }
         }
+
+        $total = $find->count();
 
         if (!empty($options['order'])) {
             foreach ($options['order'] as $field => $direction) {
-                $find = parent::orderBy($field, $direction);
+                $find = $find->orderBy($field, $direction);
             }
+        }
+
+        if (!empty($options['offset'])) {
+            $find = $find->skip($options['offset']);
         }
 
         if (!empty($options['limit'])) {
@@ -118,7 +134,12 @@ class Product extends Model
             $find = $find->where('id', '<', $options['cursor']);
         }
 
-        return $find->get();
+        return [
+            'total'  => $total,
+            'offset' => empty($options['offset']) ? 0 : $options['offset'],
+            'limit'  => empty($options['limit']) ? 0 : $options['limit'],
+            'data'   => $find->get(),
+        ];
     }
 
     /**
@@ -130,12 +151,27 @@ class Product extends Model
      */
     public static function browseByCategory($category, $options = [])
     {
+        $model = new Product();
         $find = $category->products();
+        $fillable = $model->fillable;
+
+        if (!empty($options['filters'])) {
+            $inFilters = array_intersect($fillable, array_keys($options['filters']));
+            foreach ($inFilters as $key) {
+                $find = $find->where("shop_products.{$key}", 'LIKE', $options['filters'][$key]);
+            }
+        }
+
+        $total = $find->count();
 
         if (!empty($options['order'])) {
             foreach ($options['order'] as $field => $direction) {
                 $find = $find->orderBy($field, $direction);
             }
+        }
+
+        if (!empty($options['offset'])) {
+            $find = $find->skip($options['offset']);
         }
 
         if (!empty($options['limit'])) {
@@ -146,7 +182,12 @@ class Product extends Model
             $find = $find->where('shop_products.id', '<', $options['cursor']);
         }
 
-        return $find->get();
+        return [
+            'total'  => $total,
+            'offset' => empty($options['offset']) ? 0 : $options['offset'],
+            'limit'  => empty($options['limit']) ? 0 : $options['limit'],
+            'data'   => $find->get(),
+        ];
     }
 
     /**

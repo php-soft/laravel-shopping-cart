@@ -1,7 +1,7 @@
 <?php
 
 $this->set('id', $product->id);
-$this->set('title', $product->title);
+$this->set('name', $product->name);
 $this->set('alias', $product->alias);
 $this->set('image', $product->image);
 $this->set('description', $product->description);

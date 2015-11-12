@@ -21,12 +21,14 @@ class CategoryController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $categories = Category::browse([
-            'order'     => [ 'id' => 'desc' ],
-            'limit'     => (int)Input::get('limit') ? (int)Input::get('limit') : 25,
+            'order'     => [ Input::get('sort', 'id') => Input::get('direction', 'desc') ],
+            'limit'     => ($limit = (int)Input::get('limit', 25)),
+            'offset'    => (Input::get('page', 1) - 1) * $limit,
             'cursor'    => Input::get('cursor'),
+            'filters'   => $request->all(),
         ]);
 
         return response()->json(arrayView('phpsoft.shoppingcart::category/browse', [

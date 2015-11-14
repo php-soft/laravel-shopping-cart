@@ -83,7 +83,8 @@ class Category extends Model
      */
     public static function browse($options = [])
     {
-        $find = new Category();
+        $categoryModel = config('phpsoft.shoppingcart.categoryModel');
+        $find = new $categoryModel();
         $fillable = $find->fillable;
 
         if (!empty($options['filters'])) {

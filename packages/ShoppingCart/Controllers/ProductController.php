@@ -8,15 +8,23 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
-use PhpSoft\ShoppingCart\Models\Product;
-use PhpSoft\ShoppingCart\Models\Category;
-use PhpSoft\ShoppingCart\Controllers\Controller;
-
 /**
  * Product REST
  */
 class ProductController extends Controller
 {
+    private $categoryModel = '';
+    private $productModel = '';
+
+    /**
+     * Construct controller
+     */
+    public function __construct()
+    {
+        $this->categoryModel = config('phpsoft.shoppingcart.categoryModel');
+        $this->productModel = config('phpsoft.shoppingcart.productModel');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -24,6 +32,9 @@ class ProductController extends Controller
      */
     public function index(Request $request, $categoryId = null)
     {
+        $categoryModel = $this->categoryModel;
+        $productModel = $this->productModel;
+
         $options = [
             'order'     => [ Input::get('sort', 'shop_products.id') => Input::get('direction', 'desc') ],
             'limit'     => ($limit = (int)Input::get('limit', 25)),
@@ -33,14 +44,14 @@ class ProductController extends Controller
         ];
 
         if ($categoryId != null) {
-            $category = Category::findByIdOrAlias($categoryId);
+            $category = $categoryModel::findByIdOrAlias($categoryId);
             if (empty($category)) {
                 return response()->json(null, 404);
             }
 
-            $products = Product::browseByCategory($category, $options);
+            $products = $productModel::browseByCategory($category, $options);
         } else {
-            $products = Product::browse($options);
+            $products = $productModel::browse($options);
         }
 
         return response()->json(arrayView('phpsoft.shoppingcart::product/browse', [
@@ -73,7 +84,8 @@ class ProductController extends Controller
             ]), 400);
         }
 
-        $product = Product::create($request->all());
+        $productModel = $this->productModel;
+        $product = $productModel::create($request->all());
 
         // create link between categories and product
         if ($request->categories) {
@@ -93,7 +105,8 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        $product = Product::findByIdOrAlias($id);
+        $productModel = $this->productModel;
+        $product = $productModel::findByIdOrAlias($id);
 
         if (empty($product)) {
             return response()->json(null, 404);
@@ -113,7 +126,8 @@ class ProductController extends Controller
      */
     public function update($id, Request $request)
     {
-        $product = Product::find($id);
+        $productModel = $this->productModel;
+        $product = $productModel::find($id);
 
         // check exists
         if (empty($product)) {
@@ -159,8 +173,10 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
+        $productModel = $this->productModel;
+
         // retrieve product
-        $product = Product::find($id);
+        $product = $productModel::find($id);
 
         // check exists
         if (empty($product)) {

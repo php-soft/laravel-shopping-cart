@@ -17,7 +17,7 @@ class ShoppingCartServiceProvider extends ServiceProvider
 
         // Publish config & views
         $this->publishes([
-            __DIR__ . '/../config/phpsoft-shoppingcart.php' => config_path('phpsoft.shoppingcart.php'),
+            __DIR__ . '/../config/phpsoft.shoppingcart.php' => config_path('phpsoft.shoppingcart.php'),
             __DIR__ . '/../resources/views' => base_path('resources/views/vendor/phpsoft.shoppingcart'),
         ]);
 

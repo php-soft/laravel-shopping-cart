@@ -8,14 +8,21 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
-use PhpSoft\ShoppingCart\Models\Category;
-use PhpSoft\ShoppingCart\Controllers\Controller;
-
 /**
  * Category REST
  */
 class CategoryController extends Controller
 {
+    private $categoryModel = '';
+
+    /**
+     * Construct controller
+     */
+    public function __construct()
+    {
+        $this->categoryModel = config('phpsoft.shoppingcart.categoryModel');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -23,7 +30,8 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $categories = Category::browse([
+        $categoryModel = $this->categoryModel;
+        $categories = $categoryModel::browse([
             'order'     => [ Input::get('sort', 'id') => Input::get('direction', 'desc') ],
             'limit'     => ($limit = (int)Input::get('limit', 25)),
             'offset'    => (Input::get('page', 1) - 1) * $limit,
@@ -60,7 +68,8 @@ class CategoryController extends Controller
             ]), 400);
         }
 
-        $category = Category::create($request->all());
+        $categoryModel = $this->categoryModel;
+        $category = $categoryModel::create($request->all());
 
         return response()->json(arrayView('phpsoft.shoppingcart::category/read', [
             'category' => $category
@@ -75,7 +84,8 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        $category = Category::findByIdOrAlias($id);
+        $categoryModel = $this->categoryModel;
+        $category = $categoryModel::findByIdOrAlias($id);
 
         if (empty($category)) {
             return response()->json(null, 404);
@@ -95,7 +105,8 @@ class CategoryController extends Controller
      */
     public function update($id, Request $request)
     {
-        $category = Category::find($id);
+        $categoryModel = $this->categoryModel;
+        $category = $categoryModel::find($id);
 
         // check exists
         if (empty($category)) {
@@ -135,8 +146,10 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
+        $categoryModel = $this->categoryModel;
+
         // retrieve category
-        $category = Category::find($id);
+        $category = $categoryModel::find($id);
 
         // check exists
         if (empty($category)) {

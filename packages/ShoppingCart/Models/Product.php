@@ -104,7 +104,8 @@ class Product extends Model
      */
     public static function browse($options = [])
     {
-        $find = new Product();
+        $productModel = config('phpsoft.shoppingcart.productModel');
+        $find = new $productModel();
         $fillable = $find->fillable;
 
         if (!empty($options['filters'])) {

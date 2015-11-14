@@ -15,8 +15,9 @@ class ShoppingCartServiceProvider extends ServiceProvider
         // Set views path
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'phpsoft.shoppingcart');
 
-        // Publish views
+        // Publish config & views
         $this->publishes([
+            __DIR__ . '/../config/phpsoft-shoppingcart.php' => config_path('phpsoft.shoppingcart.php'),
             __DIR__ . '/../resources/views' => base_path('resources/views/vendor/phpsoft.shoppingcart'),
         ]);
 
@@ -31,6 +32,10 @@ class ShoppingCartServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/phpsoft.shoppingcart.php', 'phpsoft.shoppingcart'
+        );
+
         $this->registerCommands();
     }
 

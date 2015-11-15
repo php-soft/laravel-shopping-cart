@@ -18,4 +18,4 @@ $this->set('categories', $this->each($product->categories()->get(), function ($s
 
     $section->set($category->id);
 }));
-$this->set('created_at', $product->created_at);
+$this->set('createdAt', date('c', strtotime($product->created_at)));

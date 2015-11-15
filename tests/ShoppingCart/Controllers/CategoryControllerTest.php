@@ -63,7 +63,7 @@ class CategoryControllerTest extends TestCase
         $this->assertEquals('Example Category', $results->entities[0]->name);
         $this->assertEquals(null, $results->entities[0]->description);
         $this->assertEquals(null, $results->entities[0]->image);
-        $this->assertEquals(0, $results->entities[0]->parent_id);
+        $this->assertEquals(0, $results->entities[0]->parentId);
         $this->assertEquals(0, $results->entities[0]->order);
         $this->assertEquals(1, $results->entities[0]->status);
     }
@@ -120,7 +120,7 @@ class CategoryControllerTest extends TestCase
 
         $this->assertEquals(201, $res->getStatusCode());
         $results = json_decode($res->getContent());
-        $this->assertEquals($categoryParent->id, $results->entities[0]->parent_id);
+        $this->assertEquals($categoryParent->id, $results->entities[0]->parentId);
     }
 
     public function testReadNotFound()
@@ -202,7 +202,7 @@ class CategoryControllerTest extends TestCase
         $this->assertEquals($category->name, $results->entities[0]->name);
         $this->assertEquals($category->alias, $results->entities[0]->alias);
         $this->assertEquals($category->description, $results->entities[0]->description);
-        $this->assertEquals($category->parent_id, $results->entities[0]->parent_id);
+        $this->assertEquals($category->parent_id, $results->entities[0]->parentId);
         $this->assertEquals($category->order, $results->entities[0]->order);
         $this->assertEquals($category->status, $results->entities[0]->status);
     }
@@ -234,7 +234,7 @@ class CategoryControllerTest extends TestCase
         $this->assertEquals(200, $res->getStatusCode());
         $results = json_decode($res->getContent());
         $this->assertEquals('new-alias', $results->entities[0]->alias);
-        $this->assertEquals(0, $results->entities[0]->parent_id);
+        $this->assertEquals(0, $results->entities[0]->parentId);
     }
 
     public function testUpdateWithBlankAlias()
@@ -321,7 +321,7 @@ class CategoryControllerTest extends TestCase
 
         $this->assertEquals(200, $res->getStatusCode());
         $results = json_decode($res->getContent());
-        $this->assertEquals($categoryParent->id, $results->entities[0]->parent_id);
+        $this->assertEquals($categoryParent->id, $results->entities[0]->parentId);
     }
 
     public function testDeleteNotAuthAndPermission()

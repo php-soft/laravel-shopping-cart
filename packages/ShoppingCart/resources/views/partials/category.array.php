@@ -6,7 +6,6 @@ $this->extract($category, [
     'alias',
     'image',
     'description',
-    'parent_id',
     'order',
     'status',
 ]);
